@@ -1,121 +1,111 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Spotlight } from "@/components/effects/spotlight";
-
-const metrics = [
-  { value: "87%", label: "Vulnerability Reduction" },
-  { value: "$3.2M", label: "Avg Loss Avoidance" },
-  { value: "72hrs → 4hrs", label: "Response Time" },
-];
+import { ArrowRight } from "lucide-react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
 
 export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
 
-  // Parallax speeds — each layer moves at a different rate
-  const labelY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const headingY = useTransform(scrollYProgress, [0, 1], [0, -140]);
-  const subtitleY = useTransform(scrollYProgress, [0, 1], [0, -170]);
-  const ctaY = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const metricsY = useTransform(scrollYProgress, [0, 1], [0, -230]);
+  useGSAP(
+    () => {
+      if (!sectionRef.current) return;
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (reducedMotion) return;
 
-  // All fade out by scroll progress 0.3
-  const fadeOut = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+      initGSAP();
+
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      // Rule draws across
+      tl.fromTo(
+        ".hero-rule",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 1, ease: "power2.inOut" },
+        0.3
+      );
+
+      // Wordmark slides up
+      tl.fromTo(
+        ".hero-wordmark",
+        { y: 60, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+        0.1
+      );
+
+      // Tagline fades in
+      tl.fromTo(
+        ".hero-tagline",
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6 },
+        0.8
+      );
+
+      // CTA fades in
+      tl.fromTo(
+        ".hero-cta",
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5 },
+        1.0
+      );
+
+      // Image rises
+      tl.fromTo(
+        ".hero-image",
+        { y: 40, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.8 },
+        0.6
+      );
+
+      // Parallax on image during scroll
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1,
+        animation: gsap.to(".hero-image", { y: -60, ease: "none" }),
+      });
+    },
+    { scope: sectionRef }
+  );
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-center pt-20 pb-12 overflow-hidden"
     >
-      <Spotlight />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {/* Wordmark */}
+        <h1 className="hero-wordmark font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] tracking-tight leading-[0.9] text-foreground mb-6">
+          Anchor
+          <br />
+          Mill Group
+        </h1>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-        <div className="text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.0 }}
-            style={{ y: labelY, opacity: fadeOut }}
-            className="font-mono text-xs uppercase tracking-widest text-primary mb-6"
-          >
-            Asset Protection & Risk Management
-          </motion.p>
+        {/* Thin rule */}
+        <div className="hero-rule h-px w-full max-w-md bg-foreground/20 origin-left mb-6" />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            style={{ y: headingY, opacity: fadeOut }}
-            className="font-mono text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-foreground mb-6"
-          >
-            Integrated Resilience, Protection, and Performance
-          </motion.h1>
+        {/* Tagline */}
+        <p className="hero-tagline font-mono text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted-foreground mb-8 max-w-xl">
+          Integrated Resilience, Protection, and Performance
+        </p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            style={{ y: subtitleY, opacity: fadeOut }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
-          >
-            Comprehensive protection for a complex world. Tailored solutions for
-            family offices, ultra-high-net-worth individuals and families, and
-            executive leaders.
-          </motion.p>
+        {/* CTA */}
+        <Link
+          href="/contact"
+          className="hero-cta inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-foreground hover:text-primary transition-colors group"
+        >
+          Begin a Conversation
+          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            style={{ y: ctaY, opacity: fadeOut }}
-            className="flex flex-wrap gap-4 justify-center mb-12"
-          >
-            <Button size="lg" asChild>
-              <a href="#who-we-are">
-                Discover Our Approach
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/contact">
-                Schedule a Call
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            style={{ y: metricsY, opacity: fadeOut }}
-            className="flex flex-wrap items-center justify-center gap-8"
-          >
-            {metrics.map((metric, i) => (
-              <div key={metric.label} className="flex items-center gap-8">
-                {i > 0 && (
-                  <div className="hidden sm:block h-10 w-px bg-border" />
-                )}
-                <div className="text-center">
-                  <p className="font-mono text-2xl font-bold text-primary">
-                    {metric.value}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {metric.label}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
+      {/* Botanical image placeholder */}
+      <div className="hero-image mt-12 lg:mt-16 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full aspect-[21/9] rounded-sm bg-gradient-to-br from-[#c4bfb5] via-[#a89f8f] to-[#7a7265] opacity-80" />
       </div>
     </section>
   );

@@ -4,14 +4,20 @@ import { siteConfig } from "@/lib/site-config";
 
 export function Footer() {
   return (
-    <footer role="contentinfo" className="bg-card/90 border-t border-border">
+    <footer
+      role="contentinfo"
+      className="bg-[#1a1714] text-[#e8e4dc]"
+    >
+      {/* Top rule */}
+      <div className="h-px bg-[rgba(240,236,228,0.15)]" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Brand row */}
         <div className="mb-12">
-          <h3 className="font-mono uppercase tracking-wider text-sm font-bold mb-3">
-            ◈ ANCHOR MILL GROUP
+          <h3 className="font-serif italic text-xl mb-3">
+            Anchor Mill Group
           </h3>
-          <p className="text-sm text-muted-foreground max-w-md">
+          <p className="text-sm text-[#e8e4dc]/60 max-w-md">
             Comprehensive protection for a complex world. Tailored solutions for
             family offices, ultra-high-net-worth individuals and families, and
             executive leaders.
@@ -22,7 +28,7 @@ export function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-10">
           {/* Navigate */}
           <div>
-            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-muted-foreground mb-4">
+            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-[#e8e4dc]/40 mb-4">
               Navigate
             </h4>
             <ul className="space-y-2">
@@ -32,7 +38,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -43,14 +49,14 @@ export function Footer() {
 
           {/* Platform */}
           <div>
-            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-muted-foreground mb-4">
+            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-[#e8e4dc]/40 mb-4">
               Platform
             </h4>
             <ul className="space-y-2">
               <li>
                 <Link
                   href={siteConfig.portalUrl}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors"
                 >
                   Client Portal
                 </Link>
@@ -58,7 +64,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors"
                 >
                   Contact
                 </Link>
@@ -68,14 +74,14 @@ export function Footer() {
 
           {/* Connect */}
           <div>
-            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-muted-foreground mb-4">
+            <h4 className="font-mono uppercase tracking-wider text-xs font-semibold text-[#e8e4dc]/40 mb-4">
               Connect
             </h4>
             <ul className="space-y-2">
               <li>
                 <a
                   href={`mailto:${siteConfig.email}`}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors"
                 >
                   {siteConfig.email}
                 </a>
@@ -83,7 +89,7 @@ export function Footer() {
               <li>
                 <Link
                   href={siteConfig.scheduleUrl}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors"
                 >
                   Schedule a Call
                 </Link>
@@ -93,8 +99,11 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>&copy; {siteConfig.copyrightYear} Anchor Mill Group Inc. All rights reserved.</p>
+        <div className="mt-12 pt-8 border-t border-[rgba(240,236,228,0.1)] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#e8e4dc]/40">
+          <p>
+            &copy; {siteConfig.copyrightYear} Anchor Mill Group Inc. All rights
+            reserved.
+          </p>
           <div className="flex items-center gap-4">
             <span>Privacy Policy</span>
             <span>|</span>

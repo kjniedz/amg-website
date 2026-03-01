@@ -1,186 +1,259 @@
 "use client";
 
-import { motion, useTransform } from "motion/react";
-import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
-import { Search, Eye, Map, Users, RefreshCw } from "lucide-react";
-import { useScrollPin } from "@/lib/use-scroll-pin";
+import { useRef, useCallback, useSyncExternalStore } from "react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
+
+/* ------------------------------------------------------------------ */
+/*  Steps data                                                         */
+/* ------------------------------------------------------------------ */
 
 const steps = [
   {
     number: "01",
-    icon: Search,
     title: "DISCOVERY & ALIGNMENT",
     description:
       "Confidential intake and cross-domain scoping to understand your full risk landscape, priorities, and existing advisory relationships.",
   },
   {
     number: "02",
-    icon: Eye,
     title: "INTELLIGENCE & ASSESSMENT",
     description:
       "Comprehensive baseline assessment across cyber, physical, digital exposure, health, governance, and geopolitical risk domains.",
   },
   {
     number: "03",
-    icon: Map,
     title: "ARCHITECTURE & STRATEGY",
     description:
-      "A unified strategic plan that coordinates resources across all domains into a single coherent action plan with clear timelines and measurable outcomes.",
+      "A unified strategic plan that coordinates resources across all domains into a single coherent action plan.",
   },
   {
     number: "04",
-    icon: Users,
     title: "ECOSYSTEM ACTIVATION",
     description:
       "Single point of accountability across all domains. Your AMG partner orchestrates every specialist, every timeline, every deliverable.",
   },
-  {
-    number: "05",
-    icon: RefreshCw,
-    title: "ONGOING OPERATIONS & EVOLUTION",
-    description:
-      "Continuous monitoring, quarterly reviews, and adaptive refinement as threats evolve and circumstances change.",
-  },
 ];
 
-function DesktopScrollPinned() {
-  const { containerRef, scrollYProgress, isActive, trackHeight } =
-    useScrollPin({ trackHeight: "400vh" });
+/* ------------------------------------------------------------------ */
+/*  Media query hooks (useSyncExternalStore)                           */
+/* ------------------------------------------------------------------ */
 
-  // Horizontal translation: move cards from 0% to -80%
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+function subscribeToDesktop(cb: () => void) {
+  const mql = window.matchMedia("(min-width: 768px)");
+  const mqlMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mql.addEventListener("change", cb);
+  mqlMotion.addEventListener("change", cb);
+  return () => {
+    mql.removeEventListener("change", cb);
+    mqlMotion.removeEventListener("change", cb);
+  };
+}
 
-  // Progress line width
-  const lineWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  // Per-card fade-in based on scroll position
-  const cardOpacities = [
-    useTransform(scrollYProgress, [0, 0.05], [0, 1]),
-    useTransform(scrollYProgress, [0.1, 0.2], [0, 1]),
-    useTransform(scrollYProgress, [0.25, 0.35], [0, 1]),
-    useTransform(scrollYProgress, [0.4, 0.5], [0, 1]),
-    useTransform(scrollYProgress, [0.55, 0.65], [0, 1]),
-  ];
-
+function getCanPinSnapshot() {
   return (
-    <div
-      ref={containerRef}
-      className={isActive ? "hidden md:block scroll-pin-container" : "hidden"}
-      style={{ height: trackHeight }}
-    >
-      <div className="scroll-pin-viewport">
-        <div className="h-full flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Heading */}
-          <div className="mb-8">
-            <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
-              THE PROCESS
-            </p>
-            <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4">
-              HOW AMG WORKS
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl">
-              A disciplined five-phase methodology that transforms fragmented
-              protection into integrated resilience.
-            </p>
-          </div>
-
-          {/* Progress line */}
-          <div className="relative h-px bg-border mb-8">
-            <motion.div
-              className="absolute inset-y-0 left-0 bg-primary"
-              style={{ width: lineWidth }}
-            />
-          </div>
-
-          {/* Horizontal card track */}
-          <div className="overflow-hidden">
-            <motion.div className="flex gap-8" style={{ x }}>
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <motion.div
-                    key={step.number}
-                    className="flex-shrink-0 w-80 border border-border rounded-lg p-8 bg-card relative overflow-hidden"
-                    style={{ opacity: cardOpacities[index] }}
-                  >
-                    {/* Watermark step number */}
-                    <span className="absolute -bottom-4 -right-2 font-mono text-[8rem] font-bold leading-none text-primary/5 select-none">
-                      {step.number}
-                    </span>
-
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
-                          <span className="font-mono text-sm text-primary font-bold">
-                            {step.number}
-                          </span>
-                        </div>
-                        <Icon className="size-5 text-primary" />
-                      </div>
-                      <h3 className="font-mono text-sm font-semibold uppercase tracking-tight mb-3 text-foreground">
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {step.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    </div>
+    window.matchMedia("(min-width: 768px)").matches &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }
 
-export function HowItWorks() {
-  return (
-    <section id="how-it-works" className="bg-card/90">
-      {/* Desktop: scroll-pinned horizontal reveal */}
-      <DesktopScrollPinned />
+function getCanPinServerSnapshot() {
+  return false;
+}
 
-      {/* Mobile: vertical stack */}
-      <div className="md:hidden py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <AnimateOnScroll>
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
+
+export function HowItWorks() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  const canPin = useSyncExternalStore(
+    subscribeToDesktop,
+    getCanPinSnapshot,
+    getCanPinServerSnapshot
+  );
+
+  const setStepRef = useCallback(
+    (index: number) => (el: HTMLDivElement | null) => {
+      stepRefs.current[index] = el;
+    },
+    []
+  );
+
+  /* ---------------------------------------------------------------- */
+  /*  GSAP scroll-pinned animation (desktop only)                      */
+  /* ---------------------------------------------------------------- */
+
+  useGSAP(
+    () => {
+      console.log("[AMG:how-it-works] useGSAP callback fired. canPin:", canPin);
+
+      if (!canPin) {
+        console.log("[AMG:how-it-works] canPin is false — skipping");
+        return;
+      }
+
+      initGSAP();
+
+      const section = sectionRef.current;
+      const pin = pinRef.current;
+      const image = imageRef.current;
+      console.log("[AMG:how-it-works] Refs:", {
+        section: !!section,
+        pin: !!pin,
+        image: !!image,
+        sectionId: section?.id,
+        sectionHeight: section?.style.height,
+        sectionOffsetHeight: section?.offsetHeight,
+        sectionBoundingTop: section?.getBoundingClientRect().top,
+      });
+
+      if (!section || !pin || !image) {
+        console.warn("[AMG:how-it-works] Missing refs — aborting");
+        return;
+      }
+
+      const items = stepRefs.current.filter(Boolean) as HTMLDivElement[];
+      console.log("[AMG:how-it-works] Step items found:", items.length);
+      if (items.length === 0) {
+        console.warn("[AMG:how-it-works] No step items — aborting");
+        return;
+      }
+
+      // Initially hide all step items
+      gsap.set(items, { autoAlpha: 0, y: 20 });
+
+      // Master timeline scrubbed by scroll
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom bottom",
+          pin: pin,
+          scrub: 0.8,
+          invalidateOnRefresh: true,
+          onToggle: (self) => {
+            console.log("[AMG:how-it-works] ScrollTrigger toggled:", { isActive: self.isActive, direction: self.direction, progress: self.progress?.toFixed(3) });
+          },
+          onUpdate: (self) => {
+            if (Math.round(self.progress * 100) % 25 === 0) {
+              console.log("[AMG:how-it-works] ScrollTrigger progress:", self.progress?.toFixed(3));
+            }
+          },
+        },
+      });
+
+      console.log("[AMG:how-it-works] Timeline created. ScrollTrigger:", {
+        exists: !!tl.scrollTrigger,
+        start: tl.scrollTrigger?.start,
+        end: tl.scrollTrigger?.end,
+        pin: !!tl.scrollTrigger?.pin,
+      });
+
+      // Image parallax across full timeline
+      tl.to(
+        image,
+        {
+          y: 30,
+          duration: items.length,
+          ease: "none",
+        },
+        0
+      );
+
+      // Stagger each step in sequentially
+      const segmentDuration = 1;
+      items.forEach((item, i) => {
+        tl.to(
+          item,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: segmentDuration * 0.5,
+            ease: "power2.out",
+          },
+          i * segmentDuration
+        );
+      });
+
+      console.log("[AMG:how-it-works] Timeline fully built. Duration:", tl.duration(), "Total ScrollTriggers now:", ScrollTrigger.getAll().length);
+
+      return () => {
+        console.log("[AMG:how-it-works] Cleanup — killing timeline + scrollTrigger");
+        tl.scrollTrigger?.kill();
+        tl.kill();
+      };
+    },
+    { scope: sectionRef, dependencies: [canPin] }
+  );
+
+  /* ---------------------------------------------------------------- */
+  /*  Render                                                           */
+  /* ---------------------------------------------------------------- */
+
+  return (
+    <section
+      ref={sectionRef}
+      id="how-it-works"
+      className="relative"
+      style={{ height: canPin ? "300vh" : "auto" }}
+    >
+      <div
+        ref={pinRef}
+        className={
+          canPin
+            ? "flex items-center min-h-screen py-24 lg:py-32"
+            : "py-24 lg:py-32"
+        }
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Section header */}
+          <div className="mb-16">
             <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
               THE PROCESS
             </p>
-            <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4">
-              HOW AMG WORKS
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight">
+              How AMG Works
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl">
-              A disciplined five-phase methodology that transforms fragmented
-              protection into integrated resilience.
-            </p>
-          </AnimateOnScroll>
+          </div>
 
-          <div className="mt-16 space-y-6">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <AnimateOnScroll key={step.number} delay={index * 0.1}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex w-12 h-12 rounded-full bg-primary/10 border border-primary/30 items-center justify-center flex-shrink-0">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="font-mono text-xs text-primary font-bold mb-1">
-                        {step.number}
-                      </div>
-                      <h3 className="font-mono text-sm font-semibold uppercase tracking-tight mb-2 text-foreground">
-                        {step.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                </AnimateOnScroll>
-              );
-            })}
+          {/* Two-column grid (desktop) or single column (mobile) */}
+          <div className={canPin ? "grid grid-cols-2 gap-16" : ""}>
+            {/* Image placeholder */}
+            <div className={canPin ? "relative" : "mb-12"}>
+              <div
+                ref={imageRef}
+                className="aspect-[3/4] rounded-sm bg-gradient-to-b from-[#c4bfb5] to-[#8a8578]"
+              />
+            </div>
+
+            {/* Numbered steps */}
+            <div className="flex flex-col justify-center">
+              {steps.map((step, i) => (
+                <div
+                  key={step.number}
+                  ref={setStepRef(i)}
+                  className={
+                    i < steps.length - 1
+                      ? "border-b border-[rgba(26,23,20,0.15)] pb-8 mb-8"
+                      : ""
+                  }
+                >
+                  <span className="font-serif italic text-4xl text-primary leading-none">
+                    {step.number}
+                  </span>
+                  <h3 className="font-mono text-sm uppercase tracking-widest font-semibold mt-3 mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

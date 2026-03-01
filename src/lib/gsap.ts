@@ -8,6 +8,8 @@
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 
 // Check if we're on the client side
 export const isClient = typeof window !== "undefined";
@@ -21,9 +23,11 @@ let initialized = false;
 export function initGSAP(): void {
   if (!isClient || initialized) return;
 
-  // Register plugins
-  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+  console.log("[AMG:gsap] Registering GSAP plugins...");
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText, useGSAP);
+  ScrollTrigger.config({ ignoreMobileResize: true });
   initialized = true;
+  console.log("[AMG:gsap] GSAP initialized. ScrollTrigger version:", ScrollTrigger.version);
 }
 
 /**
@@ -67,7 +71,7 @@ export function createGSAPContext(
 }
 
 // Export GSAP and plugins for direct use
-export { gsap, ScrollTrigger, ScrollToPlugin };
+export { gsap, ScrollTrigger, ScrollToPlugin, SplitText, useGSAP };
 
 // Default export for convenience
 export default getGSAP;

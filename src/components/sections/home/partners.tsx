@@ -1,5 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
+"use client";
+
+import { useRef } from "react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
 
 const partners = [
   {
@@ -35,34 +37,78 @@ const partners = [
 ];
 
 export function Partners() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useGSAP(
+    () => {
+      if (typeof window === "undefined") return;
+
+      initGSAP();
+
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (reducedMotion) return;
+
+      const items = itemRefs.current.filter(Boolean) as HTMLDivElement[];
+      if (items.length === 0) return;
+
+      gsap.fromTo(
+        items,
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 75%",
+            once: true,
+          },
+        }
+      );
+
+      return () => {
+        ScrollTrigger.getAll().forEach((st) => {
+          if (sectionRef.current?.contains(st.trigger as Element)) st.kill();
+        });
+      };
+    },
+    { scope: sectionRef, dependencies: [] }
+  );
+
   return (
-    <section id="partners" className="py-24 lg:py-32 bg-card/90">
+    <section ref={sectionRef} id="partners" className="py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
-          OUR NETWORK
+          Our Network
         </p>
-        <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4">
-          THE PARTNER ECOSYSTEM
+        <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-16">
+          The Partner Ecosystem
         </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          AMG&apos;s strength lies in its curated network of world-class
-          practitioners — each a recognized leader in their domain.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12">
           {partners.map((partner, i) => (
-            <AnimateOnScroll key={partner.name} delay={i * 0.1}>
-              <Card className="bg-card border-border hover:border-primary/30 transition-colors">
-                <CardContent className="p-6">
-                  <h3 className="font-mono text-base font-semibold text-foreground mb-1">
-                    {partner.name}
-                  </h3>
-                  <p className="text-sm text-primary mb-2">{partner.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {partner.credential}
-                  </p>
-                </CardContent>
-              </Card>
-            </AnimateOnScroll>
+            <div
+              key={partner.name}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              className="border-b border-[rgba(26,23,20,0.15)] pb-6 mb-6"
+            >
+              <h3 className="font-serif text-lg text-foreground">
+                {partner.name}
+              </h3>
+              <p className="font-mono text-xs uppercase tracking-widest text-primary mt-1">
+                {partner.title}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {partner.credential}
+              </p>
+            </div>
           ))}
         </div>
       </div>

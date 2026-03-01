@@ -1,36 +1,87 @@
-import { ArrowRight } from "lucide-react";
+"use client";
+
+import { useRef } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
+import { ArrowRight } from "lucide-react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
+import { siteConfig } from "@/lib/site-config";
 
 export function CTA() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (typeof window === "undefined") return;
+
+      initGSAP();
+
+      const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (reducedMotion || !bgRef.current || !sectionRef.current) return;
+
+      gsap.fromTo(
+        bgRef.current,
+        { y: 0 },
+        {
+          y: -60,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        }
+      );
+
+      return () => {
+        ScrollTrigger.getAll().forEach((st) => {
+          if (sectionRef.current?.contains(st.trigger as Element)) st.kill();
+        });
+      };
+    },
+    { scope: sectionRef, dependencies: [] }
+  );
+
   return (
-    <section className="py-24 lg:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <AnimateOnScroll>
-          <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-6">
-            BEGIN THE CONVERSATION
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen flex items-end justify-center overflow-hidden"
+    >
+      {/* Background gradient (yacht placeholder) */}
+      <div
+        ref={bgRef}
+        className="absolute inset-0 -top-16 bg-gradient-to-b from-[#c4bfb5] via-[#8a8578] to-[#1a1714]"
+        aria-hidden="true"
+      />
+
+      {/* Content overlay */}
+      <div className="relative z-10 w-full pb-20 pt-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl tracking-tight text-[#e8e4dc] mb-4">
+            Turn Chaos Into Control
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-8">
-            Every engagement begins with a private, no-obligation discovery
-            session. Share your concerns in confidence — we&apos;ll show you
-            what integrated protection looks like.
+          <p className="font-mono text-xs uppercase tracking-widest text-[#e8e4dc]/60 mb-8">
+            Partner with Anchor Mill Group
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button size="lg" asChild>
-              <Link href="/contact">
-                Begin Your Discovery
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" asChild>
-              <Link href="/contact">
-                Schedule a Call
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-          </div>
-        </AnimateOnScroll>
+
+          <a
+            href={`mailto:${siteConfig.email}`}
+            className="text-sm text-[#e8e4dc]/60 hover:text-[#e8e4dc] transition-colors mb-10 block"
+          >
+            {siteConfig.email}
+          </a>
+
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 px-8 py-3 border border-[#e8e4dc]/30 text-[#e8e4dc] hover:bg-[#e8e4dc]/10 font-mono text-xs uppercase tracking-widest transition-colors"
+          >
+            Begin Your Discovery
+            <ArrowRight className="size-3.5" />
+          </Link>
+        </div>
       </div>
     </section>
   );

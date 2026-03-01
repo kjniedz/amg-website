@@ -18,63 +18,41 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("../navbar-interactive", () => ({
-  NavbarInteractive: () => <div data-testid="navbar-interactive" />,
+vi.mock("next-themes", () => ({
+  useTheme: () => ({ setTheme: vi.fn(), resolvedTheme: "light" }),
+}));
+
+vi.mock("../overlay-nav", () => ({
+  OverlayNav: ({ open }: { open: boolean }) => (
+    <div data-testid="overlay-nav" data-open={open} />
+  ),
 }));
 
 describe("Navbar", () => {
-  it("renders the logo text 'ANCHOR MILL GROUP'", () => {
+  it("renders the wordmark", () => {
     render(<Navbar />);
 
-    expect(screen.getByText("ANCHOR MILL GROUP")).toBeInTheDocument();
+    expect(screen.getByText("Anchor Mill Group")).toBeInTheDocument();
   });
 
-  it("logo links to home page", () => {
+  it("wordmark links to home page", () => {
     render(<Navbar />);
 
-    const logo = screen.getByText("ANCHOR MILL GROUP");
-    expect(logo.closest("a")).toHaveAttribute("href", "/");
+    const wordmark = screen.getByText("Anchor Mill Group");
+    expect(wordmark.closest("a")).toHaveAttribute("href", "/");
   });
 
-  it("renders all nav links", () => {
-    render(<Navbar />);
-
-    const expectedLinks = ["Home", "About", "Strategies", "How We Serve", "Contact"];
-    for (const label of expectedLinks) {
-      expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
-    }
-  });
-
-  it("renders 'Client Login' link", () => {
+  it("renders the Menu button", () => {
     render(<Navbar />);
 
     expect(
-      screen.getByRole("link", { name: /client login/i })
+      screen.getByRole("button", { name: /open navigation menu/i })
     ).toBeInTheDocument();
   });
 
-  it("renders the NavbarInteractive component", () => {
+  it("renders the OverlayNav component", () => {
     render(<Navbar />);
 
-    expect(screen.getByTestId("navbar-interactive")).toBeInTheDocument();
-  });
-
-  it("nav links have correct href attributes", () => {
-    render(<Navbar />);
-
-    const linkMap: Record<string, string> = {
-      Home: "/",
-      About: "/about",
-      Strategies: "/strategies",
-      "How We Serve": "/how-we-serve",
-      Contact: "/contact",
-    };
-
-    for (const [label, href] of Object.entries(linkMap)) {
-      expect(screen.getByRole("link", { name: label })).toHaveAttribute(
-        "href",
-        href
-      );
-    }
+    expect(screen.getByTestId("overlay-nav")).toBeInTheDocument();
   });
 });

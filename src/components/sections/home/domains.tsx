@@ -1,30 +1,14 @@
 "use client";
 
-import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
-import {
-  Brain,
-  ShieldCheck,
-  Target,
-  HeartPulse,
-  Globe,
-  CheckCircle,
-} from "lucide-react";
+import { useRef, useSyncExternalStore } from "react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
 
 const domains = [
   {
-    value: "neurobiology",
-    icon: Brain,
-    label: "Neurobiology",
-    title: "NEUROBIOLOGY & PERFORMANCE",
+    number: "01",
+    title: "Neurobiology & Performance",
     description:
-      "Optimizing cognitive performance, stress resilience, and decision-making under pressure for principals and key family members.",
+      "Optimizing cognitive performance, stress resilience, and decision-making under pressure.",
     capabilities: [
       "Peak performance protocols",
       "Stress inoculation training",
@@ -33,12 +17,10 @@ const domains = [
     ],
   },
   {
-    value: "cyber-security",
-    icon: ShieldCheck,
-    label: "Cyber & Security",
-    title: "CYBER & PROTECTIVE SECURITY",
+    number: "02",
+    title: "Cyber & Protective Security",
     description:
-      "Comprehensive digital and physical security architecture protecting family members, assets, and reputation across all environments.",
+      "Comprehensive digital and physical security architecture protecting family members, assets, and reputation.",
     capabilities: [
       "Threat assessment & monitoring",
       "Digital forensics & incident response",
@@ -47,12 +29,10 @@ const domains = [
     ],
   },
   {
-    value: "leadership",
-    icon: Target,
-    label: "Leadership",
-    title: "LEADERSHIP DEVELOPMENT",
+    number: "03",
+    title: "Leadership Development",
     description:
-      "Building next-generation leadership capacity and succession readiness across family enterprise and governance structures.",
+      "Building next-generation leadership capacity and succession readiness across family enterprise.",
     capabilities: [
       "Succession planning",
       "Next-gen development programs",
@@ -61,12 +41,10 @@ const domains = [
     ],
   },
   {
-    value: "medicine",
-    icon: HeartPulse,
-    label: "Medicine",
-    title: "INTEGRATIVE MEDICINE",
+    number: "04",
+    title: "Integrative Medicine",
     description:
-      "Personalized health optimization combining conventional and integrative approaches for sustained peak performance and longevity.",
+      "Personalized health optimization combining conventional and integrative approaches.",
     capabilities: [
       "Metabolic optimization",
       "Longevity protocols",
@@ -75,12 +53,10 @@ const domains = [
     ],
   },
   {
-    value: "intelligence",
-    icon: Globe,
-    label: "Intelligence",
-    title: "BUSINESS INTELLIGENCE & GEOPOLITICAL RISK",
+    number: "05",
+    title: "Business Intelligence",
     description:
-      "Strategic intelligence gathering and analysis to identify threats, opportunities, and risks across global operations.",
+      "Strategic intelligence gathering and analysis to identify threats and opportunities globally.",
     capabilities: [
       "Geopolitical risk assessment",
       "Due diligence investigations",
@@ -90,73 +66,205 @@ const domains = [
   },
 ];
 
+function subscribeToDesktop(cb: () => void) {
+  const mql = window.matchMedia("(min-width: 768px)");
+  const mqlMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mql.addEventListener("change", cb);
+  mqlMotion.addEventListener("change", cb);
+  return () => {
+    mql.removeEventListener("change", cb);
+    mqlMotion.removeEventListener("change", cb);
+  };
+}
+
+function getDesktopSnapshot() {
+  const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  return isDesktop && !reducedMotion;
+}
+
+function getDesktopServerSnapshot() {
+  return false;
+}
+
 export function Domains() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const panelsRef = useRef<HTMLDivElement>(null);
+
+  const canPin = useSyncExternalStore(
+    subscribeToDesktop,
+    getDesktopSnapshot,
+    getDesktopServerSnapshot
+  );
+
+  useGSAP(
+    () => {
+      console.log("[AMG:domains] useGSAP callback fired. canPin:", canPin);
+
+      if (!canPin || !trackRef.current || !panelsRef.current) {
+        console.log("[AMG:domains] Skipping —", { canPin, track: !!trackRef.current, panels: !!panelsRef.current });
+        return;
+      }
+
+      initGSAP();
+
+      const panels = panelsRef.current;
+      const scrollDistance = panels.scrollWidth - window.innerWidth;
+      console.log("[AMG:domains] Measurements:", {
+        scrollWidth: panels.scrollWidth,
+        windowWidth: window.innerWidth,
+        scrollDistance,
+        trackOffsetTop: trackRef.current.offsetTop,
+        trackBoundingTop: trackRef.current.getBoundingClientRect().top,
+      });
+
+      if (scrollDistance <= 0) {
+        console.warn("[AMG:domains] scrollDistance <= 0, aborting");
+        return;
+      }
+
+      const tween = gsap.to(panels, {
+        x: -scrollDistance,
+        ease: "none",
+        scrollTrigger: {
+          trigger: trackRef.current,
+          start: "top top",
+          end: () => `+=${scrollDistance}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true,
+          onToggle: (self) => {
+            console.log("[AMG:domains] ScrollTrigger toggled:", { isActive: self.isActive, direction: self.direction, progress: self.progress?.toFixed(3) });
+          },
+          onUpdate: (self) => {
+            if (Math.round(self.progress * 100) % 25 === 0) {
+              console.log("[AMG:domains] ScrollTrigger progress:", self.progress?.toFixed(3));
+            }
+          },
+        },
+      });
+
+      console.log("[AMG:domains] Tween created. ScrollTrigger:", {
+        exists: !!tween.scrollTrigger,
+        start: tween.scrollTrigger?.start,
+        end: tween.scrollTrigger?.end,
+        pin: !!tween.scrollTrigger?.pin,
+      });
+      console.log("[AMG:domains] Total ScrollTriggers now:", ScrollTrigger.getAll().length);
+
+      return () => {
+        console.log("[AMG:domains] Cleanup — killing tween + scrollTrigger");
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      };
+    },
+    { scope: sectionRef, dependencies: [canPin] }
+  );
+
   return (
-    <section id="domains" className="py-24 lg:py-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimateOnScroll>
+    <section ref={sectionRef} id="domains" className="overflow-hidden">
+      {/* Section header */}
+      <div className="py-24 lg:py-32 pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
             OUR DOMAINS
           </p>
-          <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4">
-            FIVE DOMAINS. ONE ECOSYSTEM.
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight">
+            Five Domains. One Operating System.
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mb-12">
-            Each domain is led by world-class practitioners. Together, they form
-            an integrated defense and performance system.
-          </p>
-        </AnimateOnScroll>
+        </div>
+      </div>
 
-        <Tabs defaultValue="neurobiology" className="mt-12">
-          <TabsList className="flex overflow-x-auto gap-1 sm:gap-2 bg-transparent h-auto p-0 w-full no-scrollbar">
-            {domains.map((domain) => {
-              const Icon = domain.icon;
-              return (
-                <TabsTrigger
-                  key={domain.value}
-                  value={domain.value}
-                  className="font-mono text-xs uppercase tracking-wider whitespace-nowrap inline-flex items-center gap-1.5 px-3 py-2 rounded-md data-[state=active]:bg-primary/10 data-[state=active]:text-primary flex-shrink-0"
-                >
-                  <Icon className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>{domain.label}</span>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+      {canPin ? (
+        /* Desktop: GSAP horizontal scroll */
+        <div ref={trackRef} className="overflow-hidden">
+          <div
+            ref={panelsRef}
+            className="flex flex-nowrap will-change-transform"
+          >
+            {domains.map((domain, index) => (
+              <div
+                key={domain.number}
+                className="w-screen min-h-[80vh] flex-shrink-0 flex items-center"
+              >
+                <div className="max-w-5xl mx-auto px-8 relative">
+                  <span
+                    className="font-serif italic text-[10rem] text-primary/10 absolute -top-24 -left-4 select-none pointer-events-none leading-none"
+                    aria-hidden="true"
+                  >
+                    {domain.number}
+                  </span>
 
-          {domains.map((domain) => {
-            const Icon = domain.icon;
-            return (
-              <TabsContent key={domain.value} value={domain.value}>
-                <Card className="bg-card border-border p-8">
-                  <CardContent>
-                    <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                      <Icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="font-mono text-xl font-semibold uppercase tracking-tight mb-4">
+                  <div className="relative">
+                    <h3 className="font-serif text-5xl tracking-tight mb-6">
                       {domain.title}
                     </h3>
-                    <p className="text-muted-foreground text-lg mb-6">
+                    <p className="text-lg text-muted-foreground max-w-lg mb-10">
                       {domain.description}
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {domain.capabilities.map((capability) => (
-                        <div
-                          key={capability}
-                          className="flex items-center gap-2"
+                    <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                      {domain.capabilities.map((cap) => (
+                        <span
+                          key={cap}
+                          className="font-mono text-sm text-foreground"
                         >
-                          <CheckCircle className="h-4 w-4 text-primary" />
-                          <span className="text-sm">{capability}</span>
-                        </div>
+                          {cap}
+                        </span>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            );
-          })}
-        </Tabs>
-      </div>
+                  </div>
+
+                  {index < domains.length - 1 && (
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-32 w-px bg-border" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        /* Mobile: vertical stacked cards */
+        <div className="px-4 sm:px-6 lg:px-8 pb-24 lg:pb-32">
+          <div className="max-w-7xl mx-auto">
+            {domains.map((domain, index) => (
+              <div
+                key={domain.number}
+                className={`py-10 ${
+                  index < domains.length - 1
+                    ? "border-b border-[rgba(26,23,20,0.15)]"
+                    : ""
+                }`}
+              >
+                <span
+                  className="font-serif italic text-8xl text-primary/10 block leading-none mb-2 select-none"
+                  aria-hidden="true"
+                >
+                  {domain.number}
+                </span>
+                <h3 className="font-serif text-3xl tracking-tight mb-4">
+                  {domain.title}
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-lg mb-6">
+                  {domain.description}
+                </p>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+                  {domain.capabilities.map((cap) => (
+                    <span
+                      key={cap}
+                      className="font-mono text-sm text-foreground"
+                    >
+                      {cap}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

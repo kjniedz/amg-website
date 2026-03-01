@@ -1,84 +1,129 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { useInView } from "motion/react";
+import { useRef } from "react";
+import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
+
+/* ------------------------------------------------------------------ */
+/*  Metric data                                                        */
+/* ------------------------------------------------------------------ */
 
 const metrics = [
-  { value: 87, suffix: "%", label: "Average reduction in critical vulnerabilities" },
-  { value: 94, suffix: "%", label: "Improvement in incident response time" },
-  { value: 31, suffix: "%", label: "Average reduction in total security spend" },
-  { value: 3.2, suffix: "M", label: "Average loss avoidance per client", prefix: "$" },
-  { value: 68, suffix: "%", label: "Improvement in decision quality under pressure" },
-  { value: 89, suffix: "%", label: "Client confidence improvement" },
-  { value: 73, suffix: "%", label: "Reduction in governance disputes" },
-  { value: 84, suffix: "%", label: "Next-gen meet succession milestones" },
+  { value: 87, suffix: "%", prefix: "", label: "Avg Vulnerability Reduction" },
+  { value: 3.2, suffix: "M", prefix: "$", label: "Avg Loss Avoidance" },
+  { value: 94, suffix: "%", prefix: "", label: "Response Time Improvement" },
+  { value: 31, suffix: "%", prefix: "", label: "Security Spend Reduction" },
 ];
 
-function MetricCard({
-  value,
-  suffix,
-  label,
-  prefix,
-}: {
-  value: number;
-  suffix: string;
-  label: string;
-  prefix?: string;
-}) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [displayValue, setDisplayValue] = useState(0);
-
-  useEffect(() => {
-    if (!isInView) return;
-    const duration = 2000;
-    const startTime = performance.now();
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplayValue(Math.round(eased * value * 10) / 10);
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-    requestAnimationFrame(animate);
-  }, [isInView, value]);
-
-  const formatted = Number.isInteger(value)
-    ? Math.round(displayValue).toString()
-    : displayValue.toFixed(1);
-
-  return (
-    <div
-      ref={ref}
-      className="text-center p-6 rounded-lg bg-secondary/50 border border-border"
-    >
-      <div className="font-mono text-4xl font-bold tabular-nums text-primary mb-2">
-        {prefix}
-        {isInView ? formatted : "0"}
-        {suffix}
-      </div>
-      <p className="text-sm text-muted-foreground">{label}</p>
-    </div>
-  );
-}
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
 export function Metrics() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const numberRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  useGSAP(
+    () => {
+      if (typeof window === "undefined") return;
+
+      initGSAP();
+
+      // Respect prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      const section = sectionRef.current;
+      if (!section) return;
+
+      const numberEls = numberRefs.current.filter(
+        Boolean,
+      ) as HTMLSpanElement[];
+      if (numberEls.length === 0) return;
+
+      if (prefersReducedMotion) {
+        // Show final values immediately
+        metrics.forEach((metric, i) => {
+          const el = numberEls[i];
+          if (!el) return;
+          const formatted = Number.isInteger(metric.value)
+            ? metric.value.toString()
+            : metric.value.toFixed(1);
+          el.textContent = `${metric.prefix}${formatted}${metric.suffix}`;
+        });
+        return;
+      }
+
+      // Counter animation via proxy objects
+      metrics.forEach((metric, i) => {
+        const el = numberEls[i];
+        if (!el) return;
+
+        const proxy = { val: 0 };
+
+        gsap.to(proxy, {
+          val: metric.value,
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+          onUpdate() {
+            const formatted = Number.isInteger(metric.value)
+              ? Math.round(proxy.val).toString()
+              : proxy.val.toFixed(1);
+            el.textContent = `${metric.prefix}${formatted}${metric.suffix}`;
+          },
+        });
+      });
+
+      return () => {
+        ScrollTrigger.getAll().forEach((st) => {
+          if (section.contains(st.trigger as Element)) st.kill();
+        });
+      };
+    },
+    { scope: sectionRef, dependencies: [] },
+  );
+
   return (
-    <section id="metrics" className="py-24 lg:py-32 bg-card/90">
+    <section ref={sectionRef} id="metrics" className="py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Label */}
         <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
-          BY THE NUMBERS
+          By the Numbers
         </p>
-        <h2 className="font-mono text-2xl sm:text-3xl md:text-4xl font-bold uppercase tracking-tight mb-4">
-          MEASURED IMPACT
+
+        {/* Title */}
+        <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-16">
+          Measured Impact
         </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          Quantified outcomes across our client portfolio demonstrate the
-          compound value of integrated protection.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-          {metrics.map((metric) => (
-            <MetricCard key={metric.label} {...metric} />
+
+        {/* Metrics grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4">
+          {metrics.map((metric, i) => (
+            <div
+              key={metric.label}
+              className={`text-center py-8 lg:py-0 ${
+                i < metrics.length - 1
+                  ? "lg:border-r lg:border-border"
+                  : ""
+              } ${i < 2 ? "border-b lg:border-b-0 border-border" : ""}`}
+            >
+              <span
+                ref={(el) => {
+                  numberRefs.current[i] = el;
+                }}
+                className="block font-serif text-5xl md:text-6xl tabular-nums text-foreground"
+              >
+                {metric.prefix}0{metric.suffix}
+              </span>
+              <span className="block font-mono text-xs uppercase tracking-widest text-muted-foreground mt-3">
+                {metric.label}
+              </span>
+            </div>
           ))}
         </div>
       </div>
