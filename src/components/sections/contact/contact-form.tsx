@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { z } from "zod";
+import { useState, useRef, useActionState } from "react";
 import { ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,33 +8,53 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
 import { siteConfig } from "@/lib/site-config";
+import {
+  submitContactForm,
+  type ContactFormState,
+} from "@/app/contact/actions";
 
-const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  organization: z.string().min(2, "Organization is required"),
-  email: z.string().email("Please enter a valid email"),
-  phone: z.string().optional(),
-  message: z.string().min(10, "Please provide more detail"),
-});
-
-type ContactFormData = z.infer<typeof contactSchema>;
-
-type FormErrors = Partial<Record<keyof ContactFormData, string>>;
+const initialState: ContactFormState = { success: false, errors: {} };
 
 export function ContactForm() {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    organization: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  return (
+    <ContactFormInner
+      key={resetKey}
+      onReset={() => setResetKey((k) => k + 1)}
+    />
+  );
+}
+
+function ContactFormInner({ onReset }: { onReset: () => void }) {
+  const [state, formAction, isPending] = useActionState(
+    submitContactForm,
+    initialState,
+  );
+  const [clearedErrors, setClearedErrors] = useState<{
+    fields: Set<string>;
+    forState: ContactFormState;
+  }>({ fields: new Set(), forState: initialState });
 
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
+
+  function isErrorCleared(field: string) {
+    return clearedErrors.forState === state && clearedErrors.fields.has(field);
+  }
+
+  function handleFieldChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) {
+    const { name } = e.target;
+    if (state.errors[name as keyof ContactFormState["errors"]] && !isErrorCleared(name)) {
+      setClearedErrors((prev) => ({
+        fields: new Set(prev.forState === state ? prev.fields : []).add(name),
+        forState: state,
+      }));
+    }
+  }
 
   useGSAP(
     () => {
@@ -44,12 +63,11 @@ export function ContactForm() {
       initGSAP();
 
       const reducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
+        "(prefers-reduced-motion: reduce)",
       ).matches;
       if (reducedMotion) return;
 
-      if (submitted) {
-        // Simple fade-up for the success state
+      if (state.success) {
         if (leftRef.current) {
           gsap.fromTo(
             leftRef.current,
@@ -59,7 +77,7 @@ export function ContactForm() {
               opacity: 1,
               duration: 0.6,
               ease: "power2.out",
-            }
+            },
           );
         }
         return;
@@ -79,7 +97,7 @@ export function ContactForm() {
               start: "top 85%",
               once: true,
             },
-          }
+          },
         );
       }
 
@@ -97,7 +115,7 @@ export function ContactForm() {
               start: "top 85%",
               once: true,
             },
-          }
+          },
         );
       }
 
@@ -107,39 +125,10 @@ export function ContactForm() {
         });
       };
     },
-    { scope: sectionRef, dependencies: [submitted] }
+    { scope: sectionRef, dependencies: [state.success] },
   );
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof ContactFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-  }
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const result = contactSchema.safeParse(formData);
-    if (!result.success) {
-      const fieldErrors: FormErrors = {};
-      for (const issue of result.error.issues) {
-        const field = issue.path[0] as keyof ContactFormData;
-        if (!fieldErrors[field]) {
-          fieldErrors[field] = issue.message;
-        }
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-
-    setSubmitted(true);
-  }
-
-  if (submitted) {
+  if (state.success) {
     return (
       <section ref={sectionRef} className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -151,24 +140,11 @@ export function ContactForm() {
               Thank You
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Your message has been received. We respond within 24 hours to
-              all inquiries. A member of our team will reach out to begin your
+              Your message has been received. We respond within 24 hours to all
+              inquiries. A member of our team will reach out to begin your
               confidential discovery.
             </p>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setSubmitted(false);
-                setFormData({
-                  name: "",
-                  organization: "",
-                  email: "",
-                  phone: "",
-                  message: "",
-                });
-                setErrors({});
-              }}
-            >
+            <Button variant="outline" onClick={onReset}>
               Send Another Message
             </Button>
           </div>
@@ -191,8 +167,8 @@ export function ContactForm() {
             </h1>
             <p className="text-muted-foreground text-lg mb-8">
               Every engagement begins with a private, no-obligation discovery
-              session. Tell us about your situation &mdash; we&apos;ll show
-              you what integrated protection looks like.
+              session. Tell us about your situation &mdash; we&apos;ll show you
+              what integrated protection looks like.
             </p>
             <a
               href={`mailto:${siteConfig.email}`}
@@ -201,9 +177,7 @@ export function ContactForm() {
               <span className="inline-flex items-center justify-center size-10 rounded-full border border-border group-hover:border-primary transition-colors">
                 <Mail className="size-4" />
               </span>
-              <span className="font-mono text-sm">
-                {siteConfig.email}
-              </span>
+              <span className="font-mono text-sm">{siteConfig.email}</span>
             </a>
             <p className="text-muted-foreground text-sm mt-6">
               We respond within 24 hours to all inquiries.
@@ -212,45 +186,60 @@ export function ContactForm() {
 
           {/* Right column — form */}
           <div ref={rightRef}>
-            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            <form action={formAction} noValidate className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name" className="font-mono text-xs uppercase tracking-widest">
+                <Label
+                  htmlFor="name"
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
                   Name
                 </Label>
                 <Input
                   id="name"
                   name="name"
                   placeholder="Your full name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.name}
+                  onChange={handleFieldChange}
+                  aria-invalid={
+                    !!state.errors.name && !isErrorCleared("name")
+                  }
                 />
-                {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name}</p>
+                {state.errors.name && !isErrorCleared("name") && (
+                  <p className="text-sm text-destructive">
+                    {state.errors.name}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="organization" className="font-mono text-xs uppercase tracking-widest">
+                <Label
+                  htmlFor="organization"
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
                   Organization
                 </Label>
                 <Input
                   id="organization"
                   name="organization"
                   placeholder="Your organization"
-                  value={formData.organization}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.organization}
+                  onChange={handleFieldChange}
+                  aria-invalid={
+                    !!state.errors.organization &&
+                    !isErrorCleared("organization")
+                  }
                 />
-                {errors.organization && (
-                  <p className="text-sm text-destructive">
-                    {errors.organization}
-                  </p>
-                )}
+                {state.errors.organization &&
+                  !isErrorCleared("organization") && (
+                    <p className="text-sm text-destructive">
+                      {state.errors.organization}
+                    </p>
+                  )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="font-mono text-xs uppercase tracking-widest">
+                <Label
+                  htmlFor="email"
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
                   Email
                 </Label>
                 <Input
@@ -258,17 +247,23 @@ export function ContactForm() {
                   name="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.email}
+                  onChange={handleFieldChange}
+                  aria-invalid={
+                    !!state.errors.email && !isErrorCleared("email")
+                  }
                 />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email}</p>
+                {state.errors.email && !isErrorCleared("email") && (
+                  <p className="text-sm text-destructive">
+                    {state.errors.email}
+                  </p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone" className="font-mono text-xs uppercase tracking-widest">
+                <Label
+                  htmlFor="phone"
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
                   Phone{" "}
                   <span className="text-muted-foreground font-sans text-xs normal-case tracking-normal">
                     (optional)
@@ -279,13 +274,15 @@ export function ContactForm() {
                   name="phone"
                   type="tel"
                   placeholder="+1 (555) 000-0000"
-                  value={formData.phone}
-                  onChange={handleChange}
+                  onChange={handleFieldChange}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message" className="font-mono text-xs uppercase tracking-widest">
+                <Label
+                  htmlFor="message"
+                  className="font-mono text-xs uppercase tracking-widest"
+                >
                   Message
                 </Label>
                 <Textarea
@@ -293,18 +290,26 @@ export function ContactForm() {
                   name="message"
                   placeholder="Tell us about your situation and how we can help..."
                   rows={5}
-                  value={formData.message}
-                  onChange={handleChange}
-                  aria-invalid={!!errors.message}
+                  onChange={handleFieldChange}
+                  aria-invalid={
+                    !!state.errors.message && !isErrorCleared("message")
+                  }
                 />
-                {errors.message && (
-                  <p className="text-sm text-destructive">{errors.message}</p>
+                {state.errors.message && !isErrorCleared("message") && (
+                  <p className="text-sm text-destructive">
+                    {state.errors.message}
+                  </p>
                 )}
               </div>
 
-              <Button type="submit" size="lg" className="w-full sm:w-auto">
-                Send Message
-                <ArrowRight className="size-4" />
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={isPending}
+              >
+                {isPending ? "Sending..." : "Send Message"}
+                {!isPending && <ArrowRight className="size-4" />}
               </Button>
             </form>
           </div>

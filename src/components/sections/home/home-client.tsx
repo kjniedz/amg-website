@@ -6,51 +6,54 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Preloader } from "@/components/layout/preloader";
 import { CustomCursor } from "@/components/effects/custom-cursor";
+import { SectionSkeleton } from "@/components/ui/section-skeleton";
 import { ScrollTrigger, initGSAP } from "@/lib/gsap";
+
+const loading = () => <SectionSkeleton />;
 
 const Hero = dynamic(
   () => import("./hero").then((m) => m.Hero),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const Problem = dynamic(
   () => import("./problem").then((m) => m.Problem),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const BlindSpots = dynamic(
   () => import("./blind-spots").then((m) => m.BlindSpots),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const Solution = dynamic(
   () => import("./solution").then((m) => m.Solution),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const Domains = dynamic(
   () => import("./domains").then((m) => m.Domains),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const HowItWorks = dynamic(
   () => import("./how-it-works").then((m) => m.HowItWorks),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const Metrics = dynamic(
   () => import("./metrics").then((m) => m.Metrics),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const CaseStudy = dynamic(
   () => import("./case-study").then((m) => m.CaseStudy),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const Partners = dynamic(
   () => import("./partners").then((m) => m.Partners),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const EngagementModel = dynamic(
   () => import("./engagement-model").then((m) => m.EngagementModel),
-  { ssr: false }
+  { ssr: false, loading }
 );
 const CTA = dynamic(
   () => import("./cta").then((m) => m.CTA),
-  { ssr: false }
+  { ssr: false, loading }
 );
 
 export function HomeClient() {

@@ -1,14 +1,47 @@
-import type { ReactNode } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ContactForm } from "../contact-form";
+import type { ContactFormState } from "@/app/contact/actions";
 
-vi.mock("@/components/ui/animate-on-scroll", () => ({
-  AnimateOnScroll: ({ children }: { children: ReactNode }) => (
-    <div>{children}</div>
-  ),
+vi.mock("@/lib/gsap", () => ({
+  gsap: { fromTo: vi.fn() },
+  ScrollTrigger: { getAll: () => [], refresh: vi.fn() },
+  useGSAP: vi.fn(),
+  initGSAP: vi.fn(),
 }));
 
+const mockSubmit = vi.fn<
+  (state: ContactFormState, formData: FormData) => Promise<ContactFormState>
+>();
+
+vi.mock("@/app/contact/actions", () => ({
+  submitContactForm: (...args: [ContactFormState, FormData]) =>
+    mockSubmit(...args),
+}));
+
+function setupUser() {
+  return userEvent.setup();
+}
+
+async function fillAndSubmit(user: ReturnType<typeof setupUser>) {
+  await user.type(screen.getByLabelText(/^name$/i), "John Doe");
+  await user.type(
+    screen.getByLabelText(/^organization$/i),
+    "Doe Family Office",
+  );
+  await user.type(screen.getByLabelText(/^email$/i), "john@example.com");
+  await user.type(
+    screen.getByLabelText(/^message$/i),
+    "I need help with asset protection for my family.",
+  );
+  await user.click(screen.getByRole("button", { name: /send message/i }));
+}
+
 describe("ContactForm", () => {
+  beforeEach(() => {
+    mockSubmit.mockReset();
+  });
+
   it("renders the form with all fields", () => {
     render(<ContactForm />);
 
@@ -23,181 +56,189 @@ describe("ContactForm", () => {
     render(<ContactForm />);
 
     expect(
-      screen.getByRole("button", { name: /send message/i })
+      screen.getByRole("button", { name: /send message/i }),
     ).toBeInTheDocument();
   });
 
-  it("shows validation errors when submitting empty form", () => {
-    render(<ContactForm />);
-
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
-
-    expect(
-      screen.getByText("Name must be at least 2 characters")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Organization is required")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Please enter a valid email")
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Please provide more detail")
-    ).toBeInTheDocument();
-  });
-
-  it("shows name error for short name (1 char)", () => {
-    render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText(/^name$/i), {
-      target: { value: "A" },
+  it("shows validation errors when submitting empty form", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: {
+        name: "Name must be at least 2 characters",
+        organization: "Organization is required",
+        email: "Please enter a valid email",
+        message: "Please provide more detail",
+      },
     });
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+
+    render(<ContactForm />);
+    await user.click(screen.getByRole("button", { name: /send message/i }));
 
     expect(
-      screen.getByText("Name must be at least 2 characters")
+      await screen.findByText("Name must be at least 2 characters"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Organization is required"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Please enter a valid email"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Please provide more detail"),
     ).toBeInTheDocument();
   });
 
-  it("shows organization error for short org", () => {
-    render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText(/^organization$/i), {
-      target: { value: "A" },
+  it("shows name error for short name (1 char)", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: { name: "Name must be at least 2 characters" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
 
-    expect(screen.getByText("Organization is required")).toBeInTheDocument();
-  });
-
-  it("shows email error for invalid email", () => {
     render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText(/^email$/i), {
-      target: { value: "not-an-email" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    await user.type(screen.getByLabelText(/^name$/i), "A");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
 
     expect(
-      screen.getByText("Please enter a valid email")
+      await screen.findByText("Name must be at least 2 characters"),
     ).toBeInTheDocument();
   });
 
-  it("shows message error for short message (< 10 chars)", () => {
-    render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText(/^message$/i), {
-      target: { value: "Hi" },
+  it("shows organization error for short org", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: { organization: "Organization is required" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+
+    render(<ContactForm />);
+    await user.type(screen.getByLabelText(/^organization$/i), "A");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
 
     expect(
-      screen.getByText("Please provide more detail")
+      await screen.findByText("Organization is required"),
     ).toBeInTheDocument();
   });
 
-  it("phone field is optional - no error when empty", () => {
+  it("shows email error for invalid email", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: { email: "Please enter a valid email" },
+    });
+
     render(<ContactForm />);
+    await user.type(screen.getByLabelText(/^email$/i), "not-an-email");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
 
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    expect(
+      await screen.findByText("Please enter a valid email"),
+    ).toBeInTheDocument();
+  });
 
-    // Phone should not generate any error
+  it("shows message error for short message (< 10 chars)", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: { message: "Please provide more detail" },
+    });
+
+    render(<ContactForm />);
+    await user.type(screen.getByLabelText(/^message$/i), "Hi");
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    expect(
+      await screen.findByText("Please provide more detail"),
+    ).toBeInTheDocument();
+  });
+
+  it("phone field is optional - no error when empty", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: {
+        name: "Name must be at least 2 characters",
+        organization: "Organization is required",
+        email: "Please enter a valid email",
+        message: "Please provide more detail",
+      },
+    });
+
+    render(<ContactForm />);
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
+    await screen.findByText("Name must be at least 2 characters");
+
     const errors = screen.queryAllByText(/phone/i);
-    const phoneError = errors.filter(
-      (el) => el.classList.contains("text-destructive")
+    const phoneError = errors.filter((el) =>
+      el.classList.contains("text-destructive"),
     );
     expect(phoneError).toHaveLength(0);
   });
 
-  it("clears specific error when user types in that field", () => {
-    render(<ContactForm />);
+  it("clears specific error when user types in that field", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({
+      success: false,
+      errors: {
+        name: "Name must be at least 2 characters",
+        email: "Please enter a valid email",
+      },
+    });
 
-    // Submit to trigger errors
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    render(<ContactForm />);
+    await user.click(screen.getByRole("button", { name: /send message/i }));
+
     expect(
-      screen.getByText("Name must be at least 2 characters")
+      await screen.findByText("Name must be at least 2 characters"),
     ).toBeInTheDocument();
 
     // Type in the name field to clear its error
-    fireEvent.change(screen.getByLabelText(/^name$/i), {
-      target: { value: "Jo" },
-    });
+    await user.type(screen.getByLabelText(/^name$/i), "Jo");
 
     expect(
-      screen.queryByText("Name must be at least 2 characters")
+      screen.queryByText("Name must be at least 2 characters"),
     ).not.toBeInTheDocument();
 
     // Other errors should remain
     expect(
-      screen.getByText("Please enter a valid email")
+      screen.getByText("Please enter a valid email"),
     ).toBeInTheDocument();
   });
 
-  it("shows success state after valid submission", () => {
+  it("shows success state after valid submission", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({ success: true, errors: {} });
+
     render(<ContactForm />);
+    await fillAndSubmit(user);
 
-    fireEvent.change(screen.getByLabelText(/^name$/i), {
-      target: { value: "John Doe" },
-    });
-    fireEvent.change(screen.getByLabelText(/^organization$/i), {
-      target: { value: "Doe Family Office" },
-    });
-    fireEvent.change(screen.getByLabelText(/^email$/i), {
-      target: { value: "john@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/^message$/i), {
-      target: { value: "I need help with asset protection for my family." },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
-
-    expect(screen.getByText("THANK YOU")).toBeInTheDocument();
+    expect(await screen.findByText("Thank You")).toBeInTheDocument();
   });
 
-  it("success state has 'Send Another Message' button", () => {
+  it("success state has 'Send Another Message' button", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({ success: true, errors: {} });
+
     render(<ContactForm />);
-
-    fireEvent.change(screen.getByLabelText(/^name$/i), {
-      target: { value: "John Doe" },
-    });
-    fireEvent.change(screen.getByLabelText(/^organization$/i), {
-      target: { value: "Doe Family Office" },
-    });
-    fireEvent.change(screen.getByLabelText(/^email$/i), {
-      target: { value: "john@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/^message$/i), {
-      target: { value: "I need help with asset protection for my family." },
-    });
-
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
+    await fillAndSubmit(user);
 
     expect(
-      screen.getByRole("button", { name: /send another message/i })
+      await screen.findByRole("button", { name: /send another message/i }),
     ).toBeInTheDocument();
   });
 
-  it("clicking 'Send Another Message' resets the form", () => {
+  it("clicking 'Send Another Message' resets the form", async () => {
+    const user = setupUser();
+    mockSubmit.mockResolvedValueOnce({ success: true, errors: {} });
+
     render(<ContactForm />);
+    await fillAndSubmit(user);
 
-    // Fill and submit
-    fireEvent.change(screen.getByLabelText(/^name$/i), {
-      target: { value: "John Doe" },
-    });
-    fireEvent.change(screen.getByLabelText(/^organization$/i), {
-      target: { value: "Doe Family Office" },
-    });
-    fireEvent.change(screen.getByLabelText(/^email$/i), {
-      target: { value: "john@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/^message$/i), {
-      target: { value: "I need help with asset protection for my family." },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /send message/i }));
-
-    // Click reset
-    fireEvent.click(
-      screen.getByRole("button", { name: /send another message/i })
+    await screen.findByRole("button", { name: /send another message/i });
+    await user.click(
+      screen.getByRole("button", { name: /send another message/i }),
     );
 
     // Form should be back with empty fields
@@ -206,7 +247,7 @@ describe("ContactForm", () => {
     expect(screen.getByLabelText(/^email$/i)).toHaveValue("");
     expect(screen.getByLabelText(/^message$/i)).toHaveValue("");
     expect(
-      screen.getByRole("button", { name: /send message/i })
+      screen.getByRole("button", { name: /send message/i }),
     ).toBeInTheDocument();
   });
 
@@ -214,9 +255,9 @@ describe("ContactForm", () => {
     render(<ContactForm />);
 
     expect(
-      screen.getByText("BEGIN YOUR CONFIDENTIAL DISCOVERY")
+      screen.getByText("Begin Your Confidential Discovery"),
     ).toBeInTheDocument();
-    expect(screen.getByText("GET IN TOUCH")).toBeInTheDocument();
+    expect(screen.getByText("Get in Touch")).toBeInTheDocument();
   });
 
   it("renders the email link", () => {
@@ -228,7 +269,7 @@ describe("ContactForm", () => {
     expect(emailLink).toBeInTheDocument();
     expect(emailLink).toHaveAttribute(
       "href",
-      "mailto:inquiries@anchormillgroup.com"
+      "mailto:inquiries@anchormillgroup.com",
     );
   });
 });
