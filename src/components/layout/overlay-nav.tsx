@@ -124,7 +124,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
                 key={link.href}
                 href={link.href}
                 onClick={onClose}
-                className="overlay-nav-link font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#e8e4dc] hover:text-white active:text-white/80 transition-colors leading-tight"
+                className="overlay-nav-link font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#e8e4dc] hover:text-white active:text-white/80 transition-colors leading-tight"
               >
                 {link.label}
               </Link>

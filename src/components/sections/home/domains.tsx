@@ -7,7 +7,6 @@ import { useCanPin, useReducedMotion } from "@/lib/use-can-pin";
 
 const domains = [
   {
-    number: "01",
     title: "Neurobiology & Performance",
     description:
       "Optimizing cognitive performance, stress resilience, and decision-making under pressure.",
@@ -19,7 +18,6 @@ const domains = [
     ],
   },
   {
-    number: "02",
     title: "Cyber & Protective Security",
     description:
       "Comprehensive digital and physical security architecture protecting family members, assets, and reputation.",
@@ -31,7 +29,6 @@ const domains = [
     ],
   },
   {
-    number: "03",
     title: "Leadership Development",
     description:
       "Building next-generation leadership capacity and succession readiness across family enterprise.",
@@ -43,7 +40,6 @@ const domains = [
     ],
   },
   {
-    number: "04",
     title: "Integrative Medicine",
     description:
       "Personalized health optimization combining conventional and integrative approaches.",
@@ -55,7 +51,6 @@ const domains = [
     ],
   },
   {
-    number: "05",
     title: "Business Intelligence",
     description:
       "Strategic intelligence gathering and analysis to identify threats and opportunities globally.",
@@ -119,7 +114,7 @@ export function Domains() {
                 OUR DOMAINS
               </p>
               <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight">
-                Five Domains. One Operating System.
+                An Integrated Suite of Capabilities
               </h2>
             </div>
           </div>
@@ -130,17 +125,10 @@ export function Domains() {
             >
               {domains.map((domain, index) => (
                 <div
-                  key={domain.number}
+                  key={domain.title}
                   className="w-screen h-full flex-shrink-0 flex items-center"
                 >
                 <div className="max-w-5xl mx-auto px-8 relative">
-                  <span
-                    className="font-serif italic text-[10rem] text-primary/10 absolute -top-24 -left-4 select-none pointer-events-none leading-none"
-                    aria-hidden="true"
-                  >
-                    {domain.number}
-                  </span>
-
                   <div className="relative">
                     <h3 className="font-serif text-5xl tracking-tight mb-6">
                       {domain.title}
@@ -177,27 +165,13 @@ export function Domains() {
               OUR DOMAINS
             </p>
             <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight">
-              Five Domains. One Operating System.
+              An Integrated Suite of Capabilities
             </h2>
           </div>
           <div className="max-w-7xl mx-auto">
             {domains.map((domain, index) => {
               const cardContent = (
                 <>
-                  <motion.span
-                    className="font-serif italic text-8xl text-primary/10 block leading-none mb-2 select-none"
-                    aria-hidden="true"
-                    {...(!reducedMotion
-                      ? {
-                          initial: { opacity: 0, scale: 0.9 },
-                          whileInView: { opacity: 1, scale: 1 },
-                          viewport: { once: true, margin: "-60px" },
-                          transition: { duration: 0.5, ease: "easeOut" },
-                        }
-                      : {})}
-                  >
-                    {domain.number}
-                  </motion.span>
                   <h3 className="font-serif text-3xl tracking-tight mb-4">
                     {domain.title}
                   </h3>
@@ -225,7 +199,7 @@ export function Domains() {
 
               if (reducedMotion) {
                 return (
-                  <div key={domain.number} className={borderClass}>
+                  <div key={domain.title} className={borderClass}>
                     {cardContent}
                   </div>
                 );
@@ -233,7 +207,7 @@ export function Domains() {
 
               return (
                 <motion.div
-                  key={domain.number}
+                  key={domain.title}
                   className={borderClass}
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}

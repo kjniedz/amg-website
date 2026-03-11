@@ -72,11 +72,11 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Wordmark */}
             <Link
               href="/"
-              className={`font-serif italic text-base hover:text-primary transition-colors duration-300 ${
+              className={`font-serif italic text-xl hover:text-primary transition-colors duration-300 ${
                 isSolid ? "text-foreground" : "text-white"
               }`}
             >
@@ -86,7 +86,7 @@ export function Navbar() {
             {/* Menu trigger */}
             <button
               onClick={() => setNavOpen(true)}
-              className={`font-mono text-xs uppercase tracking-widest hover:opacity-80 active:opacity-60 transition-opacity duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center ${
+              className={`font-mono text-sm uppercase tracking-widest hover:opacity-80 active:opacity-60 transition-opacity duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center ${
                 isSolid ? "text-muted-foreground" : "text-white"
               }`}
               aria-label="Open navigation menu"

@@ -12,9 +12,7 @@ import {
 const domains = [
   {
     value: "neurobiology",
-    number: "01",
     title: "Neurobiology & Performance",
-    partner: "Dr. Charles Morgan III",
     description:
       "Optimizing cognitive performance, stress resilience, and decision-making under pressure for principals and key family members. Our neurobiology protocols are drawn from elite military and intelligence community methodologies, adapted for the unique demands of UHNW family leadership.",
     capabilities: [
@@ -26,9 +24,7 @@ const domains = [
   },
   {
     value: "cyber-security",
-    number: "02",
     title: "Cyber & Protective Security",
-    partner: "AMG Labs + Scot Holzschuh",
     description:
       "Comprehensive digital and physical security architecture protecting family members, assets, and reputation across all environments. We integrate cyber defense, executive protection, and secure communications into a unified shield.",
     capabilities: [
@@ -40,9 +36,7 @@ const domains = [
   },
   {
     value: "leadership",
-    number: "03",
     title: "Leadership Development",
-    partner: "Ryan Krupa",
     description:
       "Building next-generation leadership capacity and succession readiness across family enterprise and governance structures. Our programs develop the strategic thinking, emotional intelligence, and operational competence that sustaining wealth requires.",
     capabilities: [
@@ -54,9 +48,7 @@ const domains = [
   },
   {
     value: "medicine",
-    number: "04",
     title: "Integrative Medicine",
-    partner: "Dr. James LaValle",
     description:
       "Personalized health optimization combining conventional and integrative approaches for sustained peak performance and longevity. We address the metabolic, hormonal, and nutritional foundations that underpin cognitive and physical resilience.",
     capabilities: [
@@ -68,9 +60,7 @@ const domains = [
   },
   {
     value: "intelligence",
-    number: "05",
     title: "Business Intelligence & Geopolitical Risk",
-    partner: "Dr. Barry McManus",
     description:
       "Strategic intelligence gathering and analysis to identify threats, opportunities, and risks across global operations. Our analysts draw on decades of intelligence community experience to provide actionable insights for complex decision-making.",
     capabilities: [
@@ -137,12 +127,12 @@ export function StrategiesDomains() {
             Five Domains
           </p>
           <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-4">
-            The AMG Ecosystem
+            A Modular Suite of Expertise
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mb-12">
-            Each domain is led by world-class practitioners with deep expertise.
-            Together, they form an integrated defense and performance system
-            unlike anything available in the private sector.
+            Each domain stands on its own as a world-class discipline — engage
+            one, several, or all. Together they form a coordinated layer of
+            protection and performance tailored to your family&apos;s precise needs.
           </p>
         </div>
 
@@ -151,16 +141,11 @@ export function StrategiesDomains() {
             {domains.map((domain) => (
               <AccordionItem key={domain.value} value={domain.value}>
                 <AccordionTrigger className="py-6 hover:no-underline">
-                  <div className="flex items-center gap-4">
-                    <span className="font-serif italic text-2xl text-primary leading-none flex-shrink-0">
-                      {domain.number}
-                    </span>
-                    <span className="font-serif text-lg sm:text-xl tracking-tight text-foreground text-left">
-                      {domain.title}
-                    </span>
-                  </div>
+                  <span className="font-serif text-lg sm:text-xl tracking-tight text-foreground text-left">
+                    {domain.title}
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pl-12">
+                <AccordionContent className="pl-0">
                   <p className="text-muted-foreground text-base mb-6">
                     {domain.description}
                   </p>

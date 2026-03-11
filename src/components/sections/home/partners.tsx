@@ -5,32 +5,26 @@ import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
 
 const partners = [
   {
-    name: "Dr. Barry McManus",
     title: "Intelligence & Assessment",
     credential: "Former Senior Intelligence Officer",
   },
   {
-    name: "Dr. Charles Morgan III",
     title: "Neurobiology & Performance",
     credential: "Yale School of Medicine \u2022 Former CIA",
   },
   {
-    name: "Dr. James LaValle",
     title: "Integrative Medicine",
     credential: "Clinical Pharmacist \u2022 Metabolic Medicine",
   },
   {
-    name: "Ryan Krupa",
     title: "Leadership Development",
     credential: "Fortune 100 Executive Coach",
   },
   {
-    name: "AMG Labs",
     title: "Cyber & Digital Security",
     credential: "NSA/Government-Level Threat Operations",
   },
   {
-    name: "Scot Holzschuh",
     title: "Protective Operations",
     credential: "USMC Veteran \u2022 Executive Protection",
   },
@@ -93,18 +87,15 @@ export function Partners() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12">
           {partners.map((partner, i) => (
             <div
-              key={partner.name}
+              key={partner.title}
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
               className="border-b border-[rgba(26,23,20,0.15)] pb-6 mb-6"
             >
               <h3 className="font-serif text-lg text-foreground">
-                {partner.name}
-              </h3>
-              <p className="font-mono text-xs uppercase tracking-widest text-primary mt-1">
                 {partner.title}
-              </p>
+              </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 {partner.credential}
               </p>

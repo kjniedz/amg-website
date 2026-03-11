@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useSyncExternalStore } from "react";
-import { gsap, ScrollTrigger, useGSAP, initGSAP } from "@/lib/gsap";
+import { gsap, useGSAP, initGSAP } from "@/lib/gsap";
 
 const traditionalItems = [
   "Wealth Advisor (siloed)",
@@ -50,49 +50,40 @@ export function Solution() {
 
       initGSAP();
 
+      const section = sectionRef.current;
       const leftEls = leftItemsRef.current.filter(Boolean) as HTMLLIElement[];
       const rightEls = rightItemsRef.current.filter(Boolean) as HTMLLIElement[];
 
-      // Left column items: slide in from left
-      leftEls.forEach((el) => {
-        gsap.fromTo(
-          el,
-          { x: -30, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              end: "top 60%",
-              scrub: true,
-            },
-          }
-        );
+      gsap.set(leftEls, { x: -30, autoAlpha: 0 });
+      gsap.set(rightEls, { x: 30, autoAlpha: 0 });
+
+      // Left column: slide in from left, staggered
+      gsap.to(leftEls, {
+        x: 0,
+        autoAlpha: 1,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          once: true,
+        },
       });
 
-      // Right column items: slide in from right
-      rightEls.forEach((el) => {
-        gsap.fromTo(
-          el,
-          { x: 30, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              end: "top 60%",
-              scrub: true,
-            },
-          }
-        );
+      // Right column: slide in from right, staggered
+      gsap.to(rightEls, {
+        x: 0,
+        autoAlpha: 1,
+        duration: 0.5,
+        ease: "power2.out",
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: section,
+          start: "top 80%",
+          once: true,
+        },
       });
-
-      // Refresh after setup
-      ScrollTrigger.refresh();
     },
     { scope: sectionRef, dependencies: [reducedMotion] }
   );
@@ -137,7 +128,6 @@ export function Solution() {
                     leftItemsRef.current[i] = el;
                   }}
                   className="flex items-center gap-3 py-4 border-b border-[rgba(26,23,20,0.15)]"
-                  style={reducedMotion ? undefined : { opacity: 0 }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-destructive/60 shrink-0" />
                   <span className="font-mono text-sm text-muted-foreground">
@@ -164,7 +154,6 @@ export function Solution() {
                     rightItemsRef.current[i] = el;
                   }}
                   className="flex items-center gap-3 py-4 border-b border-[rgba(26,23,20,0.15)]"
-                  style={reducedMotion ? undefined : { opacity: 0 }}
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                   <span className="font-mono text-sm text-foreground">
