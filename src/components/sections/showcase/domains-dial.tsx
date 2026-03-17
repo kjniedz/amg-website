@@ -340,7 +340,7 @@ export function DomainsDial() {
               <img
                 src="/Anchor-mill-group-logo.webp"
                 alt=""
-                className="w-[60px] brightness-0 dark:brightness-100 dark:invert-0 opacity-70"
+                className="w-[90px] brightness-0 dark:brightness-100 dark:invert-0 opacity-70"
               />
             </div>
           </div>
