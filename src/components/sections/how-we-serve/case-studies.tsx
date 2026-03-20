@@ -89,7 +89,7 @@ export function CaseStudies() {
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
-              className="border-t border-[rgba(26,23,20,0.15)] pt-8 mb-12 last:mb-0"
+              className="border-t border-rule pt-8 mb-12 last:mb-0"
             >
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left: title + metrics */}

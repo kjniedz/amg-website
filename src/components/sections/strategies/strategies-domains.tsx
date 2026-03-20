@@ -210,7 +210,7 @@ export function StrategiesDomains() {
           <span className="font-mono text-xs uppercase tracking-widest text-primary">
             Five Domains
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight mt-4">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl tracking-tight mt-4">
             A Modular Suite of Expertise
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto mt-4">

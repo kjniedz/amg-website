@@ -75,18 +75,20 @@ export function BlindSpots() {
             <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
               THE BLIND SPOT
             </p>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight mb-6">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl tracking-tight mb-6">
               Traditional Advisors Create Blind Spots
             </h2>
-            <p ref={bodyRef} className="text-muted-foreground text-lg mb-8">
+            <p className="font-serif italic text-xl md:text-2xl text-foreground/80 mb-6 leading-relaxed">
               Your wealth advisor sees the portfolio. Your attorney sees the
-              trust structure. Your security team sees the threat landscape. None
-              of them see each other&apos;s blind spots. The result is a
+              trust structure. Your security team sees the threat landscape.
+            </p>
+            <p ref={bodyRef} className="text-muted-foreground text-lg md:text-xl mb-8 leading-relaxed">
+              None of them see each other&apos;s blind spots. The result is a
               patchwork of protection — comprehensive on paper, catastrophically
               fragmented in practice.
             </p>
             <blockquote className="border-l-2 border-primary pl-6">
-              <p className="italic font-serif text-foreground">
+              <p className="italic font-serif text-lg text-foreground">
                 Blind spots become fault lines where preventable crises take
                 shape.
               </p>

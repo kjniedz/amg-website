@@ -83,24 +83,38 @@ export function PartnerBios() {
           practitioners &mdash; each a recognized leader in their domain.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12">
+        {/* Stacked layout: initial letter anchor + content side by side */}
+        <div className="divide-y divide-rule">
           {partners.map((partner, i) => (
             <div
               key={partner.title}
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
-              className="border-b border-[rgba(26,23,20,0.15)] pb-6 mb-6"
+              className="py-10 lg:py-12 grid grid-cols-1 md:grid-cols-[5rem_1fr] gap-6 md:gap-12"
             >
-              <h3 className="font-serif text-lg text-foreground">
-                {partner.title}
-              </h3>
-              <p className="font-mono text-xs uppercase tracking-widest text-primary mt-1">
-                {partner.credential}
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-                {partner.bio}
-              </p>
+              {/* Decorative initial letter */}
+              <div className="flex items-start justify-start md:justify-center pt-1">
+                <span
+                  aria-hidden="true"
+                  className="font-serif text-5xl lg:text-6xl text-primary/25 leading-none select-none"
+                >
+                  {partner.title.charAt(0)}
+                </span>
+              </div>
+
+              {/* Content */}
+              <div>
+                <h3 className="font-serif text-xl sm:text-2xl tracking-tight mb-1">
+                  {partner.title}
+                </h3>
+                <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
+                  {partner.credential}
+                </p>
+                <p className="text-muted-foreground text-base leading-relaxed max-w-2xl">
+                  {partner.bio}
+                </p>
+              </div>
             </div>
           ))}
         </div>

@@ -132,7 +132,7 @@ export function HowItWorks() {
             {steps.map((step, i) => {
               const borderClass =
                 i < steps.length - 1
-                  ? "border-b border-[rgba(26,23,20,0.15)] pb-8 mb-8"
+                  ? "border-b border-rule pb-8 mb-8"
                   : "";
 
               return (

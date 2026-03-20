@@ -47,12 +47,12 @@ export function ClientProfiles() {
 
       gsap.fromTo(
         items,
-        { y: 20, opacity: 0 },
+        { y: 24, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
+          duration: 0.7,
+          stagger: 0.15,
           ease: "power2.out",
         }
       );
@@ -61,36 +61,42 @@ export function ClientProfiles() {
   );
 
   return (
-    <section ref={sectionRef} className="pt-32 py-24 lg:py-32">
+    <section ref={sectionRef} className="pt-32 pb-24 lg:pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
           Who We Serve
         </p>
-        <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-16">
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight mb-16">
           Client Profiles
-        </h2>
+        </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-16 gap-y-12">
+        <div>
           {profiles.map((profile, i) => (
-            <div
-              key={profile.number}
-              ref={(el) => {
-                itemRefs.current[i] = el;
-              }}
-              className="border-t border-[rgba(26,23,20,0.15)] pt-6"
-            >
-              <span className="font-serif italic text-2xl text-primary leading-none">
-                {profile.number}
-              </span>
-              <h3 className="font-serif text-xl sm:text-2xl tracking-tight mt-3 mb-2">
-                {profile.title}
-              </h3>
-              <p className="font-mono text-xs uppercase tracking-widest text-primary mb-3">
-                {profile.stat}
-              </p>
-              <p className="text-muted-foreground text-base leading-relaxed">
-                {profile.description}
-              </p>
+            <div key={profile.number}>
+              <div
+                ref={(el) => {
+                  itemRefs.current[i] = el;
+                }}
+                className={`py-12 lg:py-16 flex flex-col gap-4 ${
+                  i % 2 === 0 ? "items-start text-left" : "items-end text-right"
+                }`}
+              >
+                <span className="font-serif italic text-sm text-primary leading-none">
+                  {profile.number}
+                </span>
+                <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight max-w-lg">
+                  {profile.title}
+                </h2>
+                <p className="font-mono text-xs uppercase tracking-widest text-primary">
+                  {profile.stat}
+                </p>
+                <p className="text-muted-foreground text-base leading-relaxed max-w-md">
+                  {profile.description}
+                </p>
+              </div>
+              {i < profiles.length - 1 && (
+                <div className="border-t border-rule" />
+              )}
             </div>
           ))}
         </div>

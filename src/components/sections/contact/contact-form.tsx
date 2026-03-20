@@ -26,7 +26,7 @@ export function ContactForm() {
   );
 }
 
-function ContactFormInner({ onReset }: { onReset: () => void }) {
+export function ContactFormInner({ onReset }: { onReset: () => void }) {
   const [state, formAction, isPending] = useActionState(
     submitContactForm,
     initialState,
@@ -116,21 +116,26 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
     return (
       <section ref={sectionRef} className="py-24 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div ref={leftRef} className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center justify-center size-16 rounded-full bg-primary/10 mb-6">
-              <Mail className="size-8 text-primary" />
+          <div ref={leftRef} className="max-w-2xl mx-auto">
+            <div className="bg-card border border-rule rounded-2xl p-10 lg:p-14 text-center">
+              <div className="inline-flex items-center justify-center size-20 rounded-full bg-primary/10 mb-8">
+                <Mail className="size-9 text-primary" />
+              </div>
+              <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-4">
+                Thank You
+              </h2>
+              <p className="font-serif italic text-xl text-muted-foreground mb-4">
+                Your enquiry is in trusted hands.
+              </p>
+              <p className="text-muted-foreground text-lg mb-10 leading-relaxed">
+                Your message has been received. A member of our team will reach
+                out within 24 hours to begin your confidential discovery — in
+                complete discretion.
+              </p>
+              <Button variant="outline" onClick={onReset}>
+                Send Another Message
+              </Button>
             </div>
-            <h2 className="font-serif text-2xl sm:text-3xl tracking-tight mb-4">
-              Thank You
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Your message has been received. We respond within 24 hours to all
-              inquiries. A member of our team will reach out to begin your
-              confidential discovery.
-            </p>
-            <Button variant="outline" onClick={onReset}>
-              Send Another Message
-            </Button>
           </div>
         </div>
       </section>
@@ -146,9 +151,12 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
             <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
               Get in Touch
             </p>
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight mb-6">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-tight mb-4">
               Begin Your Confidential Discovery
             </h1>
+            <p className="font-serif italic text-xl text-muted-foreground mt-4 mb-6">
+              Every great protection begins with a single, honest conversation.
+            </p>
             <p className="text-muted-foreground text-lg mb-8">
               Every engagement begins with a private, no-obligation discovery
               session. Tell us about your situation &mdash; we&apos;ll show you
@@ -170,132 +178,139 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
           {/* Right column — form */}
           <div ref={rightRef}>
-            <form action={formAction} noValidate className="space-y-6">
-              <div className="space-y-2">
-                <Label
-                  htmlFor="name"
-                  className="font-mono text-xs uppercase tracking-widest"
-                >
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Your full name"
-                  onChange={handleFieldChange}
-                  aria-invalid={
-                    !!state.errors.name && !isErrorCleared("name")
-                  }
-                />
-                {state.errors.name && !isErrorCleared("name") && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.name}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="organization"
-                  className="font-mono text-xs uppercase tracking-widest"
-                >
-                  Organization
-                </Label>
-                <Input
-                  id="organization"
-                  name="organization"
-                  placeholder="Your organization"
-                  onChange={handleFieldChange}
-                  aria-invalid={
-                    !!state.errors.organization &&
-                    !isErrorCleared("organization")
-                  }
-                />
-                {state.errors.organization &&
-                  !isErrorCleared("organization") && (
+            <div className="bg-card/50 border border-rule rounded-2xl p-8 lg:p-10">
+              <form action={formAction} noValidate className="space-y-8">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="name"
+                    className="font-mono text-xs uppercase tracking-widest"
+                  >
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Your full name"
+                    onChange={handleFieldChange}
+                    aria-invalid={
+                      !!state.errors.name && !isErrorCleared("name")
+                    }
+                    className="bg-background h-12 px-4 focus-visible:ring-primary/50"
+                  />
+                  {state.errors.name && !isErrorCleared("name") && (
                     <p className="text-sm text-destructive">
-                      {state.errors.organization}
+                      {state.errors.name}
                     </p>
                   )}
-              </div>
+                </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="email"
-                  className="font-mono text-xs uppercase tracking-widest"
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="organization"
+                    className="font-mono text-xs uppercase tracking-widest"
+                  >
+                    Organization
+                  </Label>
+                  <Input
+                    id="organization"
+                    name="organization"
+                    placeholder="Your organization"
+                    onChange={handleFieldChange}
+                    aria-invalid={
+                      !!state.errors.organization &&
+                      !isErrorCleared("organization")
+                    }
+                    className="bg-background h-12 px-4 focus-visible:ring-primary/50"
+                  />
+                  {state.errors.organization &&
+                    !isErrorCleared("organization") && (
+                      <p className="text-sm text-destructive">
+                        {state.errors.organization}
+                      </p>
+                    )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="email"
+                    className="font-mono text-xs uppercase tracking-widest"
+                  >
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    onChange={handleFieldChange}
+                    aria-invalid={
+                      !!state.errors.email && !isErrorCleared("email")
+                    }
+                    className="bg-background h-12 px-4 focus-visible:ring-primary/50"
+                  />
+                  {state.errors.email && !isErrorCleared("email") && (
+                    <p className="text-sm text-destructive">
+                      {state.errors.email}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="phone"
+                    className="font-mono text-xs uppercase tracking-widest"
+                  >
+                    Phone{" "}
+                    <span className="text-muted-foreground font-sans text-xs normal-case tracking-normal">
+                      (optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="+1 (555) 000-0000"
+                    onChange={handleFieldChange}
+                    className="bg-background h-12 px-4 focus-visible:ring-primary/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="message"
+                    className="font-mono text-xs uppercase tracking-widest"
+                  >
+                    Message
+                  </Label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    placeholder="Tell us about your situation and how we can help..."
+                    rows={5}
+                    onChange={handleFieldChange}
+                    aria-invalid={
+                      !!state.errors.message && !isErrorCleared("message")
+                    }
+                    className="bg-background px-4 py-3 focus-visible:ring-primary/50"
+                  />
+                  {state.errors.message && !isErrorCleared("message") && (
+                    <p className="text-sm text-destructive">
+                      {state.errors.message}
+                    </p>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full sm:w-auto"
+                  disabled={isPending}
                 >
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  onChange={handleFieldChange}
-                  aria-invalid={
-                    !!state.errors.email && !isErrorCleared("email")
-                  }
-                />
-                {state.errors.email && !isErrorCleared("email") && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.email}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="phone"
-                  className="font-mono text-xs uppercase tracking-widest"
-                >
-                  Phone{" "}
-                  <span className="text-muted-foreground font-sans text-xs normal-case tracking-normal">
-                    (optional)
-                  </span>
-                </Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
-                  onChange={handleFieldChange}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="message"
-                  className="font-mono text-xs uppercase tracking-widest"
-                >
-                  Message
-                </Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Tell us about your situation and how we can help..."
-                  rows={5}
-                  onChange={handleFieldChange}
-                  aria-invalid={
-                    !!state.errors.message && !isErrorCleared("message")
-                  }
-                />
-                {state.errors.message && !isErrorCleared("message") && (
-                  <p className="text-sm text-destructive">
-                    {state.errors.message}
-                  </p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full sm:w-auto"
-                disabled={isPending}
-              >
-                {isPending ? "Sending..." : "Send Message"}
-                {!isPending && <ArrowRight className="size-4" />}
-              </Button>
-            </form>
+                  {isPending ? "Sending..." : "Send Message"}
+                  {!isPending && <ArrowRight className="size-4" />}
+                </Button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

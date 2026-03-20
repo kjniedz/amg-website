@@ -97,7 +97,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] bg-charcoal"
+      className="fixed inset-0 z-[200] bg-[#2c2926]"
       style={{ clipPath: "inset(0 0 100% 0)" }}
       aria-hidden={!open}
       role="dialog"

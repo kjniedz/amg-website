@@ -50,12 +50,12 @@ export function Partners() {
 
       gsap.fromTo(
         items,
-        { y: 20, opacity: 0 },
+        { y: 16, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
+          duration: 0.5,
+          stagger: 0.07,
           ease: "power2.out",
         }
       );
@@ -73,19 +73,20 @@ export function Partners() {
           The Partner Ecosystem
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12">
+        {/* Editorial masthead list */}
+        <div className="divide-y divide-rule">
           {partners.map((partner, i) => (
             <div
               key={partner.title}
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
-              className="border-b border-[rgba(26,23,20,0.15)] pb-6 mb-6"
+              className="flex items-baseline justify-between gap-8 py-6 group"
             >
-              <h3 className="font-serif text-lg text-foreground">
+              <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl text-foreground leading-tight">
                 {partner.title}
               </h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground shrink-0 hidden sm:block">
                 {partner.credential}
               </p>
             </div>

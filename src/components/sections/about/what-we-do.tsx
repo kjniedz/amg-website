@@ -44,12 +44,12 @@ export function WhatWeDo() {
 
       gsap.fromTo(
         items,
-        { y: 20, opacity: 0 },
+        { y: 24, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
+          duration: 0.7,
+          stagger: 0.12,
           ease: "power2.out",
         }
       );
@@ -70,22 +70,27 @@ export function WhatWeDo() {
           Three phases. One integrated outcome.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-16 gap-y-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {capabilities.map((cap, i) => (
             <div
               key={cap.number}
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
-              className="border-t border-[rgba(26,23,20,0.15)] pt-6"
+              className="bg-card relative overflow-hidden p-8 lg:p-10"
             >
-              <span className="font-serif italic text-2xl text-primary leading-none">
+              {/* Large ghost number — decorative background anchor */}
+              <span
+                aria-hidden="true"
+                className="absolute bottom-4 right-4 font-serif leading-none text-[8rem] lg:text-[10rem] text-primary/10 select-none pointer-events-none"
+              >
                 {cap.number}
               </span>
-              <h3 className="font-serif text-xl sm:text-2xl tracking-tight mt-3 mb-2">
+
+              <h3 className="font-serif text-2xl sm:text-3xl tracking-tight mb-4 relative z-10">
                 {cap.title}
               </h3>
-              <p className="text-muted-foreground text-base leading-relaxed">
+              <p className="text-muted-foreground text-base leading-relaxed relative z-10 max-w-xs">
                 {cap.description}
               </p>
             </div>

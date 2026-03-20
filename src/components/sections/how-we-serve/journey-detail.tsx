@@ -100,7 +100,7 @@ export function JourneyDetail() {
               ref={(el) => {
                 itemRefs.current[i] = el;
               }}
-              className="border-b border-[rgba(26,23,20,0.15)] pb-8 mb-8 last:border-b-0 last:mb-0 last:pb-0"
+              className="border-b border-rule pb-8 mb-8 last:border-b-0 last:mb-0 last:pb-0"
             >
               <span className="font-serif italic text-2xl text-primary leading-none">
                 {step.number}

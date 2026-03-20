@@ -1,32 +1,39 @@
 "use client";
 
 import { useRef } from "react";
+import { Layers, ShieldCheck, Award, Waypoints, type LucideIcon } from "lucide-react";
 import { gsap, useGSAP, initGSAP } from "@/lib/gsap";
 
-const leftItems = [
+interface DifferentiatorItem {
+  icon: LucideIcon;
+  title: string;
+  description: string;
+}
+
+const leftItems: DifferentiatorItem[] = [
   {
-    symbol: "\u2295",
+    icon: Layers,
     title: "Integration Over Isolation",
     description:
       "Where others provide point solutions, we provide a unified operating system.",
   },
   {
-    symbol: "\u2B22",
+    icon: ShieldCheck,
     title: "Absolute Discretion",
     description:
       "We serve clients who cannot afford public exposure. Confidentiality is foundational, not aspirational.",
   },
 ];
 
-const rightItems = [
+const rightItems: DifferentiatorItem[] = [
   {
-    symbol: "\u25CE",
+    icon: Award,
     title: "World-Class Practitioners",
     description:
       "Every partner is a recognized leader in their field \u2014 former intelligence officers, Yale physicians, Fortune 100 coaches.",
   },
   {
-    symbol: "\u25C8",
+    icon: Waypoints,
     title: "Adaptive Methodology",
     description:
       "Our framework evolves with your threats, your family, and your enterprise.",
@@ -110,9 +117,7 @@ export function Differentiators() {
                     leftRefs.current[i] = el;
                   }}
                 >
-                  <span className="text-2xl text-primary leading-none">
-                    {item.symbol}
-                  </span>
+                  <item.icon className="size-7 text-primary" strokeWidth={1.5} />
                   <h4 className="font-mono text-sm uppercase tracking-widest text-foreground mt-3 mb-2">
                     {item.title}
                   </h4>
@@ -137,9 +142,7 @@ export function Differentiators() {
                     rightRefs.current[i] = el;
                   }}
                 >
-                  <span className="text-2xl text-primary leading-none">
-                    {item.symbol}
-                  </span>
+                  <item.icon className="size-7 text-primary" strokeWidth={1.5} />
                   <h4 className="font-mono text-sm uppercase tracking-widest text-foreground mt-3 mb-2">
                     {item.title}
                   </h4>

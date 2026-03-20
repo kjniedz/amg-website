@@ -98,24 +98,24 @@ export function Problem() {
         <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
           The Challenge
         </p>
-        <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl tracking-tight mb-6">
+        <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-tight mb-6">
           Navigating Complex Realities
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
-          <p className="text-muted-foreground text-lg">
-            The threats facing ultra-high-net-worth families are no longer
-            isolated. They are converging, accelerating, and increasingly
-            sophisticated.
-          </p>
-          <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-            <Image
-              src="/images/globe-dominoes.jpg"
-              alt="Glass globe surrounded by falling dominoes — cascading global risk"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
+        <p className="font-serif italic text-xl md:text-2xl lg:text-3xl text-muted-foreground leading-snug max-w-3xl mb-12 lg:mb-16">
+          The threats facing ultra-high-net-worth families are no longer
+          isolated. They are converging, accelerating, and increasingly
+          sophisticated.
+        </p>
+
+        {/* Cinematic image strip */}
+        <div className="relative aspect-[21/9] rounded-xl overflow-hidden mb-16">
+          <Image
+            src="/images/globe-dominoes.jpg"
+            alt="Glass globe surrounded by falling dominoes — cascading global risk"
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
@@ -123,7 +123,7 @@ export function Problem() {
             <div
               key={challenge.title}
               ref={setChallengeRef(i)}
-              className="border-t border-[rgba(26,23,20,0.15)] pt-6"
+              className="border-t border-rule pt-6"
             >
               <h3 className="font-serif text-xl sm:text-2xl tracking-tight mb-2">
                 {challenge.title}
@@ -137,7 +137,7 @@ export function Problem() {
 
         <div
           ref={calloutRef}
-          className="mt-16 rounded-lg bg-charcoal text-[#e8e4dc] px-6 py-8 sm:px-12 sm:py-12"
+          className="mt-16 rounded-lg bg-[#2c2926] text-[#e8e4dc] px-6 py-8 sm:px-12 sm:py-12"
         >
           <p className="font-serif text-xl sm:text-2xl md:text-3xl leading-snug tracking-tight max-w-3xl italic">
             &ldquo;{CALLOUT_TEXT}&rdquo;

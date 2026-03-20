@@ -15,8 +15,9 @@ export default function GlobalError({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#e8e4dc",
-          color: "#1a1714",
+          colorScheme: "light dark",
+          backgroundColor: "light-dark(#e8e4dc, #0a0a0a)",
+          color: "light-dark(#1a1714, #f0ece4)",
           fontFamily: "system-ui, sans-serif",
         }}
       >
@@ -27,7 +28,7 @@ export default function GlobalError({
               fontSize: "0.75rem",
               textTransform: "uppercase",
               letterSpacing: "0.1em",
-              color: "#8b7d5e",
+              color: "light-dark(#8b7d5e, #d4c9a8)",
               marginBottom: "1rem",
             }}
           >
@@ -45,7 +46,7 @@ export default function GlobalError({
           </h1>
           <p
             style={{
-              color: "#5c5549",
+              color: "light-dark(#5c5549, #8a8578)",
               marginBottom: "2rem",
               lineHeight: 1.6,
             }}

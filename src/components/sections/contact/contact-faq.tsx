@@ -85,7 +85,7 @@ export function ContactFAQ() {
           <p className="font-mono text-xs uppercase tracking-widest text-primary mb-4">
             Frequently Asked Questions
           </p>
-          <h2 className="font-serif text-3xl md:text-4xl tracking-tight mb-12">
+          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl tracking-tight mb-12">
             Common Questions
           </h2>
         </div>
@@ -93,11 +93,15 @@ export function ContactFAQ() {
         <div ref={accordionRef}>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`faq-${index}`}>
-                <AccordionTrigger className="font-serif text-lg text-left">
+              <AccordionItem
+                key={index}
+                value={`faq-${index}`}
+                className="border-b border-rule px-4 rounded-lg transition-colors duration-200 hover:bg-muted/30 data-[state=open]:bg-muted/30"
+              >
+                <AccordionTrigger className="font-serif text-lg sm:text-xl text-left py-6 hover:no-underline [&>svg]:text-primary">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-base leading-relaxed">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
