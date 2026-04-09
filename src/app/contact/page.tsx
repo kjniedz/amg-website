@@ -16,7 +16,7 @@ export default function ContactPage() {
     <>
       <ScrollProgress />
       <Navbar />
-      <main id="main-content" className="pt-20">
+      <main id="main-content">
         <ContactForm />
         <ContactFAQ />
       </main>

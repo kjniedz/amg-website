@@ -39,7 +39,7 @@ export function StrategiesHero() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-[#2c2926] overflow-hidden"
+      className="relative bg-charcoal overflow-hidden"
     >
       {/* Subtle noise/grain texture overlay */}
       <div
@@ -63,12 +63,12 @@ export function StrategiesHero() {
       />
 
       {/* Content */}
-      <div className="relative z-10 pt-48 pb-28 lg:pb-36 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 pt-36 pb-24 lg:pb-32 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <p
           ref={(el) => {
             itemRefs.current[0] = el;
           }}
-          className="font-mono text-xs uppercase tracking-widest text-[#d4c9a8] mb-4"
+          className="font-mono text-xs uppercase tracking-widest text-primary mb-4"
         >
           Our Approach
         </p>
@@ -76,7 +76,7 @@ export function StrategiesHero() {
           ref={(el) => {
             itemRefs.current[1] = el;
           }}
-          className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight text-[#e8e4dc] mb-6 max-w-4xl"
+          className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl tracking-tight text-foreground mb-6 max-w-4xl"
         >
           Sovereign Global Ecosystem
         </h1>
@@ -84,7 +84,7 @@ export function StrategiesHero() {
           ref={(el) => {
             itemRefs.current[2] = el;
           }}
-          className="text-lg sm:text-xl text-[#e8e4dc]/60 max-w-3xl"
+          className="text-lg sm:text-xl text-foreground/60 max-w-3xl"
         >
           Five specialized domains — unified under one strategic command layer
           — delivering comprehensive protection, optimized performance, and
@@ -96,7 +96,7 @@ export function StrategiesHero() {
           ref={(el) => {
             itemRefs.current[3] = el as HTMLElement | null;
           }}
-          className="mt-16 h-px bg-gradient-to-r from-[#d4c9a8]/30 via-[#d4c9a8]/10 to-transparent"
+          className="mt-16 h-px bg-gradient-to-r from-primary/30 via-primary/10 to-transparent"
           aria-hidden="true"
         />
       </div>

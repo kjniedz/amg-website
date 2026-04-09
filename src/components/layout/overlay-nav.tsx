@@ -97,7 +97,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-[200] bg-[#2c2926]"
+      className="fixed inset-0 z-[200] bg-charcoal"
       style={{ clipPath: "inset(0 0 100% 0)" }}
       aria-hidden={!open}
       role="dialog"
@@ -108,7 +108,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
         <div className="flex justify-end p-6 md:p-10">
           <button
             onClick={onClose}
-            className="overlay-nav-close text-[#e8e4dc] hover:text-white active:text-white/80 transition-colors p-2.5 -m-2.5"
+            className="overlay-nav-close text-foreground hover:text-white active:text-white/80 transition-colors p-2.5 -m-2.5"
             aria-label="Close navigation"
           >
             <X className="size-6" />
@@ -124,7 +124,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
                 key={link.href}
                 href={link.href}
                 onClick={onClose}
-                className="overlay-nav-link font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#e8e4dc] hover:text-white active:text-white/80 transition-colors leading-tight"
+                className="overlay-nav-link font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-foreground hover:text-white active:text-white/80 transition-colors leading-tight"
               >
                 {link.label}
               </Link>
@@ -134,24 +134,24 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
           {/* Right: contact + theme */}
           <div className="overlay-nav-contact flex flex-col gap-6 md:w-72">
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-[#e8e4dc]/60 mb-3">
+              <p className="font-mono text-xs uppercase tracking-widest text-foreground/60 mb-3">
                 Contact
               </p>
               <a
                 href={`mailto:${siteConfig.email}`}
-                className="text-[#e8e4dc] hover:text-white transition-colors text-sm"
+                className="text-foreground hover:text-white transition-colors text-sm"
               >
                 {siteConfig.email}
               </a>
             </div>
             <div>
-              <p className="font-mono text-xs uppercase tracking-widest text-[#e8e4dc]/60 mb-3">
+              <p className="font-mono text-xs uppercase tracking-widest text-foreground/60 mb-3">
                 Portal
               </p>
               <Link
                 href={siteConfig.portalUrl}
                 onClick={onClose}
-                className="text-[#e8e4dc] hover:text-white transition-colors text-sm"
+                className="text-foreground hover:text-white transition-colors text-sm"
               >
                 Client Portal
               </Link>
@@ -160,7 +160,7 @@ export function OverlayNav({ open, onClose }: OverlayNavProps) {
               onClick={() =>
                 setTheme(resolvedTheme === "dark" ? "light" : "dark")
               }
-              className="flex items-center gap-2 text-[#e8e4dc]/60 hover:text-white active:text-white/80 transition-colors text-sm mt-4"
+              className="flex items-center gap-2 text-foreground/60 hover:text-white active:text-white/80 transition-colors text-sm mt-4"
               aria-label="Toggle theme"
             >
               <Sun className="size-4 hidden dark:block" />

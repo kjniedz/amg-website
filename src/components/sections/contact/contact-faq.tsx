@@ -96,7 +96,7 @@ export function ContactFAQ() {
               <AccordionItem
                 key={index}
                 value={`faq-${index}`}
-                className="border-b border-rule px-4 rounded-lg transition-colors duration-200 hover:bg-muted/30 data-[state=open]:bg-muted/30"
+                className="px-4 rounded-lg transition-colors duration-200 hover:bg-muted/30 data-[state=open]:bg-muted/30"
               >
                 <AccordionTrigger className="font-serif text-lg sm:text-xl text-left py-6 hover:no-underline [&>svg]:text-primary">
                   {faq.question}

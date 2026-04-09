@@ -58,16 +58,14 @@ export function BlindSpots() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left column: portrait image */}
-          <div className="overflow-hidden rounded-xl">
-            <div ref={imageRef} className="relative aspect-[3/4] rounded-xl overflow-hidden">
-              <Image
-                src="/images/blind-spot-portrait.jpg"
-                alt="Portrait of an elderly man with eyes closed — representing the blind spots in traditional advisory"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
+          <div ref={imageRef} className="relative aspect-[3/4] rounded-xl overflow-hidden">
+            <Image
+              src="/images/blind-spot-portrait.jpg"
+              alt="Portrait of an elderly man with eyes closed — representing the blind spots in traditional advisory"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
           </div>
 
           {/* Right column: body text */}

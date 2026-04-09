@@ -24,7 +24,7 @@ const ConstellationGraph = dynamic(
 );
 
 // Build minimal graph data for the 3D layer
-const RING_RADIUS = 100;
+const RING_RADIUS = 130;
 
 function ringPosition(index: number, total: number, radius: number) {
   const angle = (2 * Math.PI * index) / total;
@@ -193,7 +193,7 @@ export function Domains() {
         </h2>
 
         {/* Desktop: 3D constellation + DOM overlays */}
-        <div className="relative hidden md:block" style={{ height: 640 }}>
+        <div className="relative hidden md:block overflow-hidden" style={{ height: 640 }}>
           {/* 3D graph layer */}
           <ConstellationGraph
             nodes={nodes}

@@ -482,7 +482,7 @@ export function Metrics() {
   );
 
   return (
-    <section ref={sectionRef} id="metrics" className="-mt-16 lg:-mt-24">
+    <section ref={sectionRef} id="metrics" className="py-24 lg:py-32">
       {canAnimate ? (
         <div
           ref={pinContainerRef}
