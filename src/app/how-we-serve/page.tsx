@@ -6,6 +6,8 @@ import { ClientProfiles } from "@/components/sections/how-we-serve/client-profil
 import { JourneyDetail } from "@/components/sections/how-we-serve/journey-detail";
 import { CaseStudies } from "@/components/sections/how-we-serve/case-studies";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "How We Serve",
   description:

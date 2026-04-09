@@ -19,6 +19,8 @@ const Differentiators = dynamic(
     ),
   { ssr: true, loading },
 );
+export const revalidate = 3600;
+
 export const metadata = {
   title: "About",
   description:

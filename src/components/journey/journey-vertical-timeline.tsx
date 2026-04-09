@@ -120,7 +120,7 @@ export function JourneyVerticalTimeline({
 
       const ctx = gsap.context(() => {
         gsap.to(dot, {
-          top: lineDistance,
+          y: lineDistance,
           ease: "none",
           scrollTrigger: {
             trigger: container,

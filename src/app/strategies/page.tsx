@@ -6,6 +6,8 @@ import { StrategiesHero } from "@/components/sections/strategies/strategies-hero
 import { StrategiesDomains } from "@/components/sections/strategies/strategies-domains";
 import { EngagementModel } from "@/components/sections/home/engagement-model";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Strategies",
   description:

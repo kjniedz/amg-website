@@ -63,6 +63,7 @@ export function BlindSpots() {
               src="/images/blind-spot-portrait.jpg"
               alt="Portrait of an elderly man with eyes closed — representing the blind spots in traditional advisory"
               fill
+              priority
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
             />

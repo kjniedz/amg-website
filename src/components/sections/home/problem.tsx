@@ -113,6 +113,7 @@ export function Problem() {
             src="/images/globe-dominoes.jpg"
             alt="Glass globe surrounded by falling dominoes — cascading global risk"
             fill
+            priority
             className="object-cover"
             sizes="100vw"
           />

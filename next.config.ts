@@ -22,8 +22,11 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
   experimental: {
-    optimizePackageImports: ["lucide-react", "motion"],
+    optimizePackageImports: ["lucide-react", "motion", "gsap", "three"],
   },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];

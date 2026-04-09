@@ -8,12 +8,14 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   weight: ["400", "500", "700"],
   subsets: ["latin"],
+  display: "swap",
 });
 
 const playfairDisplay = Playfair_Display({
@@ -21,6 +23,7 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["400", "700", "900"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
