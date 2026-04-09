@@ -38,7 +38,7 @@ describe("navLinks", () => {
   });
 
   it("contains all expected routes", () => {
-    const expectedRoutes = ["/", "/about", "/strategies", "/how-we-serve", "/contact"];
+    const expectedRoutes = ["/", "/about", "/strategies", "/who-we-serve", "/contact"];
     const actualRoutes = navLinks.map((link) => link.href);
 
     for (const route of expectedRoutes) {

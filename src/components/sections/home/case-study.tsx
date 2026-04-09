@@ -243,7 +243,7 @@ export function CaseStudy() {
       {/* CTA link */}
       <div className="mt-12 text-center">
         <Link
-          href="/how-we-serve"
+          href="/who-we-serve"
           className="font-mono text-xs uppercase tracking-widest text-primary hover:text-primary/80 active:text-primary/60 transition-colors inline-flex items-center gap-2"
         >
           See How We Prevent This
